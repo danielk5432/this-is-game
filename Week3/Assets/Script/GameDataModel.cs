@@ -3,7 +3,7 @@ using UnityEngine;
 public class GameDataModel : MonoBehaviour
 {
     public static GameDataModel Instance { get; private set; }
-
+    public bool isDebugMode = false; // 디버그 모드 여부
     public int totalScore;
     public int unlockedLevels;
     
