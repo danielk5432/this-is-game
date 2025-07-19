@@ -7,56 +7,83 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 3f;
 
     [Header("상자 들기/놓기")]
-    public Transform headPosition;      // 머리 위 위치 (빈 오브젝트)
-    public string boxTag = "Box";          // 상자 감지용 레이어
+    public Transform headPosition;           // 머리 위 위치
+    public string boxTag = "Box";            // 상자 Tag
     public float pickupRadius = 1f;
     public float dropOffset = 1f;
-    public float boxOffset = 1f;
 
     [Header("캐릭터 스케일")]
-    public float shrinkAmountPerWeight = 0.02f; // 무게 1당 줄어드는 높이
-    public float minHeightScale = 0.5f;         // 너무 작아지는 것 방지
+    public float shrinkAmountPerWeight = 0.02f;
+    public float minHeightScale = 0.5f;
 
-    private Vector2 moveInput;
-    private Vector2 lookDirection = Vector2.down; // 초기 바라보는 방향
+    private Vector2 dir;
+    private Vector2 lookDirection = Vector2.down;
     private Rigidbody2D rb;
     private List<GameObject> carriedBoxes = new List<GameObject>();
-    private GameObject carriedBox = null;
+    private float originalHeightScaleY;
+    private float originalScaleX;
+    private Animator animator;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        originalHeightScale = transform.localScale.y;
+        originalHeightScaleY = transform.localScale.y;
+        originalScaleX = transform.localScale.x;
+        animator = GetComponentInChildren<Animator>();
     }
 
     void Update()
     {
-        // 입력 처리
-        moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+        dir = Vector2.zero;
+        
+        if (Input.GetKey(KeyCode.A))
+        {
+            dir.x = -1;
+            lookDirection = Vector2.left;
+            animator.SetInteger("Direction", 3);
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            dir.x = 1;
+            lookDirection = Vector2.right;
+            animator.SetInteger("Direction", 2);
+        }
 
-        if (moveInput != Vector2.zero)
-            lookDirection = moveInput; // 이동 방향 = 바라보는 방향
+        if (Input.GetKey(KeyCode.W))
+        {
+            dir.y = 1;
+            lookDirection = Vector2.up;
+            animator.SetInteger("Direction", 1);
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            dir.y = -1;
+            lookDirection = Vector2.down;
+            animator.SetInteger("Direction", 0);
+        }
 
-        // 상자 줍기
+        dir.Normalize();
+        animator.SetBool("IsMoving", dir.magnitude > 0);
+
+        GetComponent<Rigidbody2D>().linearVelocity = moveSpeed * dir;
+        // 줍기
         if (Input.GetKeyDown(KeyCode.E))
             TryPickupBox();
 
-        // 상자 내려놓기
+        // 내려놓기
         if (Input.GetKeyDown(KeyCode.Q))
-            DropBox();
+            DropTopBox();
 
         UpdateCarriedBoxesPosition();
     }
 
     void FixedUpdate()
     {
-        rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + dir * moveSpeed * Time.fixedDeltaTime);
     }
 
     void TryPickupBox()
     {
-        if (carriedBox != null) return;
-
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, pickupRadius);
         foreach (var hit in hits)
         {
@@ -71,7 +98,7 @@ public class PlayerController : MonoBehaviour
                 // 스택에 추가
                 carriedBoxes.Add(box);
 
-                // 무게 반영: 키 줄이기
+                // 무게 → 키 줄이기
                 float weight = GetBoxWeight(box);
                 ShrinkHeight(weight);
                 return;
@@ -79,17 +106,88 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void DropBox()
+    void DropTopBox()
     {
-        if (carriedBox == null) return;
+        if (carriedBoxes.Count == 0) return;
 
+        GameObject topBox = carriedBoxes[carriedBoxes.Count - 1];
+        carriedBoxes.RemoveAt(carriedBoxes.Count - 1);
+
+        // 내려놓을 위치
         Vector2 dropPos = (Vector2)transform.position + lookDirection * dropOffset;
-        carriedBox.transform.position = dropPos;
+        topBox.transform.position = dropPos;
 
-        var rb2d = carriedBox.GetComponent<Rigidbody2D>();
+        // Rigidbody 다시 켜기
+        var rb2d = topBox.GetComponent<Rigidbody2D>();
         if (rb2d != null) rb2d.simulated = true;
 
-        carriedBox = null;
+        // 키 복구
+        float weight = GetBoxWeight(topBox);
+        RestoreHeight(weight);
+    }
 
+    void UpdateCarriedBoxesPosition()
+    {
+        Vector3 currentPos = headPosition.position;
+        float baseZ = transform.position.z;
+
+        for (int i = 0; i < carriedBoxes.Count; i++)
+        {
+            GameObject box = carriedBoxes[i];
+            Transform headPoint = box.transform.Find("HeadPoint");
+
+            if (i == 0)
+            {
+                Vector3 newPos = currentPos;
+                newPos.z = baseZ - 1f - (i * 1f);
+                box.transform.position = newPos;
+                continue;
+            }
+
+            if (headPoint != null)
+            {
+                // HeadPoint가 Box에서 얼마나 떨어져 있는지 (로컬 오프셋 기준)
+                Vector3 localOffset = headPoint.position - box.transform.position;
+                Debug.Log(localOffset);
+
+                // 위치 = 현재 쌓인 기준점 + offset
+                Vector3 newPos = currentPos + localOffset;
+
+                // 위에 갈수록 더 앞으로
+                newPos.z = baseZ - 1f - (i * 1f);
+
+                // 적용
+                box.transform.position = newPos;
+
+                // 다음 박스를 쌓을 기준 위치는 현재 상자의 HeadPoint
+                currentPos = newPos;
+            }
+            else
+            {
+                Debug.LogWarning("HeadPoint가 설정되지 않은 상자가 있음: " + box.name);
+            }
+        }
+    }
+
+    float GetBoxWeight(GameObject box)
+    {
+        var rb2d = box.GetComponent<Rigidbody2D>();
+        return rb2d != null ? rb2d.mass : 1f;
+    }
+
+    void ShrinkHeight(float weight)
+    {
+        Vector3 scale = transform.localScale;
+        scale.y = Mathf.Max(minHeightScale, scale.y - weight * shrinkAmountPerWeight);
+        scale.x = originalScaleX; // X축은 유지
+        transform.localScale = scale;
+    }
+
+    void RestoreHeight(float weight)
+    {
+        Vector3 scale = transform.localScale;
+        scale.y = Mathf.Min(originalHeightScaleY, scale.y + weight * shrinkAmountPerWeight);
+        scale.x = originalScaleX; // X축은 유지
+        transform.localScale = scale;
     }
 }
