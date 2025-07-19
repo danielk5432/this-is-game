@@ -1,22 +1,18 @@
 using UnityEngine;
 
-public class TestLevelController : MonoBehaviour
+public class TestLevelController : BaseLevelController
 {
-    private float levelTimer = 0f;
-    private bool isLevelActive = true;
+    [Header("Test Level Settings")]
+    public GameObject bossPrefab;
+    //public Transform bossSpawnPoint;
 
-    public bool isLevelCleared = true;
+    // 부모 클래스의 Start() 함수는 자동으로 호출됩니다.
+    // (플레이어 생성, 공통 UI 설정 등)
 
-   [Tooltip("이 레벨을 클리어하면 활성화될 포털")]
-    public Portal nextLevelPortal;
-
-    void Start()
+    // 부모의 abstract 함수를 레벨 2에 맞게 구현합니다.
+    protected override void InitializeLevel()
     {
-        // 레벨 시작 시에는 다음 포털을 비활성화
-        if (nextLevelPortal != null && !isLevelCleared)
-        {
-            nextLevelPortal.isActive = false;
-        }
+        Debug.Log("Setting up level 1...");
+        
     }
-
 }

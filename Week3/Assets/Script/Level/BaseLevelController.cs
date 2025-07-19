@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class BaseLevelController : MonoBehaviour
 {
-    [Header("공통 설정")]
+    [Header("Base Level Settings")]
     public PlayerSpawner playerSpawner; // 플레이어 스포너 참조
 
     protected virtual void Start()
