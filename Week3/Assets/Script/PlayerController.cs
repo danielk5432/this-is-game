@@ -4,7 +4,9 @@ using System.Collections.Generic;
 public class PlayerController : MonoBehaviour
 {
     [Header("이동 설정")]
-    public float moveSpeed = 3f;
+    public float baseMoveSpeed = 4f;
+    public float minMoveSpeed = 0.1f;
+    public float speedDecreasePerWeight = 0.2f;
 
     [Header("상자 들기/놓기")]
     public Transform headPosition;           // 머리 위 위치
@@ -22,7 +24,9 @@ public class PlayerController : MonoBehaviour
     private List<GameObject> carriedBoxes = new List<GameObject>();
     private float originalHeightScaleY;
     private float originalScaleX;
+    private float currentMoveSpeed;
     private Animator animator;
+    private float totalWeight = 0f;
 
     void Awake()
     {
@@ -36,26 +40,26 @@ public class PlayerController : MonoBehaviour
     {
         dir = Vector2.zero;
         
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             dir.x = -1;
             lookDirection = Vector2.left;
             animator.SetInteger("Direction", 3);
         }
-        else if (Input.GetKey(KeyCode.D))
+        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             dir.x = 1;
             lookDirection = Vector2.right;
             animator.SetInteger("Direction", 2);
         }
 
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             dir.y = 1;
             lookDirection = Vector2.up;
             animator.SetInteger("Direction", 1);
         }
-        else if (Input.GetKey(KeyCode.S))
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
             dir.y = -1;
             lookDirection = Vector2.down;
@@ -65,7 +69,9 @@ public class PlayerController : MonoBehaviour
         dir.Normalize();
         animator.SetBool("IsMoving", dir.magnitude > 0);
 
-        GetComponent<Rigidbody2D>().linearVelocity = moveSpeed * dir;
+
+        UpdateSpeedByWeight();
+        GetComponent<Rigidbody2D>().linearVelocity = currentMoveSpeed * dir;
         // 줍기
         if (Input.GetKeyDown(KeyCode.E))
             TryPickupBox();
@@ -79,11 +85,13 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.MovePosition(rb.position + dir * moveSpeed * Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + dir * currentMoveSpeed * Time.fixedDeltaTime);
     }
 
     void TryPickupBox()
     {
+        if (carriedBoxes.Count >= 4) return;
+
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, pickupRadius);
         foreach (var hit in hits)
         {
@@ -100,6 +108,7 @@ public class PlayerController : MonoBehaviour
 
                 // 무게 → 키 줄이기
                 float weight = GetBoxWeight(box);
+                totalWeight += weight;
                 ShrinkHeight(weight);
                 return;
             }
@@ -123,6 +132,7 @@ public class PlayerController : MonoBehaviour
 
         // 키 복구
         float weight = GetBoxWeight(topBox);
+        totalWeight -= weight;
         RestoreHeight(weight);
     }
 
@@ -148,7 +158,6 @@ public class PlayerController : MonoBehaviour
             {
                 // HeadPoint가 Box에서 얼마나 떨어져 있는지 (로컬 오프셋 기준)
                 Vector3 localOffset = headPoint.position - box.transform.position;
-                Debug.Log(localOffset);
 
                 // 위치 = 현재 쌓인 기준점 + offset
                 Vector3 newPos = currentPos + localOffset;
@@ -189,5 +198,11 @@ public class PlayerController : MonoBehaviour
         scale.y = Mathf.Min(originalHeightScaleY, scale.y + weight * shrinkAmountPerWeight);
         scale.x = originalScaleX; // X축은 유지
         transform.localScale = scale;
+    }
+
+    void UpdateSpeedByWeight()
+    {
+        currentMoveSpeed = baseMoveSpeed - totalWeight * speedDecreasePerWeight;
+        currentMoveSpeed = Mathf.Max(minMoveSpeed, currentMoveSpeed);
     }
 }

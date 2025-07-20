@@ -112,14 +112,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6eb68ed95e017c42a61d25ba7679817, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
+  baseMoveSpeed: 4
+  minMoveSpeed: 0.01
+  speedDecreasePerWeight: 0.2
   headPosition: {fileID: 122509755674843692}
   boxTag: Box
   pickupRadius: 1
-  dropOffset: 1
-  boxHeightOffset: 0.3
-  shrinkAmountPerWeight: 0.02
-  minHeightScale: 0.5
+  dropOffset: 0.3
+  shrinkAmountPerWeight: 0.04
+  minHeightScale: 0.3
 --- !u!1 &7551458985762427675
 GameObject:
   m_ObjectHideFlags: 0
