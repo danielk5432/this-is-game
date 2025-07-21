@@ -30,9 +30,9 @@ public class BaseBoxGenerator : MonoBehaviour, IInteractable
     private void OnGUI()
     {
         // Only show debug info if the object is selected in the editor or for all objects if you remove this check.
-#if UNITY_EDITOR
+
         if (UnityEditor.Selection.activeGameObject != gameObject) return;
-#endif
+
 
         if (Camera.main == null) return;
 
