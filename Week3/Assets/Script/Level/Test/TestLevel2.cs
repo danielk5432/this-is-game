@@ -29,7 +29,11 @@ public class TestLevel2Controller : BaseLevelController
     public GameObject warningIndicatorPrefab;
     public BombRainController bombRainController;
     public float bombRainInterval = 15f;
-
+    
+    [Header("Lazer Settings")]
+    public GameObject laserPrefab;
+    public float minX = -10f, maxX = 10f, minY = -10f, maxY = 10f;
+    public float laserInterval = 15f;
 
     protected override void InitializeLevel()
     {
@@ -42,6 +46,7 @@ public class TestLevel2Controller : BaseLevelController
         StartCoroutine(BreakdownRoutine());
         StartCoroutine(GhostEnemySpawnRoutine());
         StartCoroutine(BombRainRoutine());
+        StartCoroutine(LaserRoutine());
     }
 
     private IEnumerator BreakdownRoutine()
@@ -125,4 +130,32 @@ public class TestLevel2Controller : BaseLevelController
             yield return new WaitForSeconds(bombRainInterval);
         }
     }
+
+    private IEnumerator LaserRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(laserInterval);
+
+            // 왼쪽 영역에서 시작
+            Vector3 start = new Vector3(
+                Random.Range(-10f, -8f), // x: 왼쪽
+                Random.Range(-4f, 4f),   // y
+                0f
+            );
+
+            // 오른쪽 영역으로 끝남
+            Vector3 end = new Vector3(
+                Random.Range(8f, 10f),   // x: 오른쪽
+                Random.Range(-4f, 4f),   // y
+                0f
+            );
+
+            Vector3 direction = (end - start).normalized;
+
+            GameObject laser = Instantiate(laserPrefab);
+            laser.GetComponent<LaserController>().Init(start, direction);
+        }
+    }
+
 }

@@ -267,10 +267,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void SetStun()
+    public void SetStun(float duration)
     {
         isStunned = true;
-        stunTimer = stunDuration;
+        stunTimer = duration;
     }
 
     void Stun()
@@ -287,7 +287,12 @@ public class PlayerController : MonoBehaviour
 
     public void HitByBomb()
     {
-        SetStun();
+        SetStun(stunDuration);
+        DropAllBoxes();
+    }
+
+    public void DropAllBoxes()
+    {
         while (carriedBoxes.Count > 0)
         {
             ConsumeTopBox();

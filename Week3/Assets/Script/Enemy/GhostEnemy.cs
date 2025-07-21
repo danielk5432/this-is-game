@@ -35,7 +35,7 @@ public class GhostEnemy : MonoBehaviour
             PlayerController pc = other.GetComponent<PlayerController>();
             if (pc != null)
             {
-                pc.SetStun();
+                pc.SetStun(2.5f);
                 Debug.Log("GhostEnemy hit Player");
                 Destroy(gameObject);
             }
