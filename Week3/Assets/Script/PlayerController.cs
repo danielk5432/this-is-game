@@ -284,4 +284,13 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("IsMoving", false);
         return;
     }
+
+    public void HitByBomb()
+    {
+        SetStun();
+        while (carriedBoxes.Count > 0)
+        {
+            ConsumeTopBox();
+        }
+    }
 }

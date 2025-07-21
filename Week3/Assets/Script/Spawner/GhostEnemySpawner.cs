@@ -5,7 +5,7 @@ public class GhostEnemySpawner : MonoBehaviour
     [Tooltip("생성할 GhostEnemy 프리팹")]
     public GameObject ghostEnemyPrefab;
 
-    public void SpawnGhostEnemy()
+    public GameObject SpawnGhostEnemy()
     {
         // 1. 데이터 모델에서 목표 스폰 ID를 가져옴
         string targetSpawnId = GameDataModel.Instance.nextSpawnPointIdentifier;
@@ -28,13 +28,13 @@ public class GhostEnemySpawner : MonoBehaviour
         if (targetSpawnPoint != null)
         {
             // 일치하는 스폰 포인트를 찾았으면 그 위치에 생성
-            Instantiate(ghostEnemyPrefab, targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
+            return Instantiate(ghostEnemyPrefab, targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
         }
         else
         {
             // 못 찾았거나, 게임을 처음 시작해서 ID가 없는 경우 기본 위치에 생성
             Debug.LogWarning("목표 스폰 포인트를 찾지 못했습니다. 기본 위치에 생성합니다.");
-            Instantiate(ghostEnemyPrefab, Vector3.zero, Quaternion.identity);
+            return Instantiate(ghostEnemyPrefab, Vector3.zero, Quaternion.identity);
         }
     }
 }
