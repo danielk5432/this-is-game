@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: dbb10a9c9bd924151af4a1d2e96f8fb1
+guid: 232c3a071c5c64e078a1545fd0d868c9
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -102,7 +102,7 @@ ScriptedImporter:
     generateIndividualEvents: 1
     generateSpriteAtlas: 1
   importFileNodeState: 1
-  platformSettingsDirtyTick: 638887107980969380
+  platformSettingsDirtyTick: 638887107626709210
   textureAssetName: 
   singleSpriteImportData:
   - name: 
@@ -127,7 +127,7 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
   animatedSpriteImportData:
-  - name: UniversalRenderPipelineGlobalSettings.asset
+  - name: gold_box
     originalName: 
     pivot: {x: 0.5, y: 0}
     alignment: 9
@@ -139,7 +139,7 @@ ScriptedImporter:
       y: 4
       width: 26
       height: 39
-    spriteID: 9dcf98503da1446ddbb3e10726f660e8
+    spriteID: e0a63df0d721c4478a87fc96ec31ca18
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -149,7 +149,7 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 4, y: 4}
   spriteSheetImportData:
-  - name: iron_box
+  - name: gold_box_0
     originalName: 
     pivot: {x: 0.5, y: 0}
     alignment: 7
@@ -161,7 +161,7 @@ ScriptedImporter:
       y: 4
       width: 26
       height: 39
-    spriteID: 502e7795cc06c4c0da600aeea2c32bc5
+    spriteID: 8090e5da19e3044fb84afc05db264c56
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -174,17 +174,17 @@ ScriptedImporter:
   asepriteLayers:
   - layerIndex: 0
     uuid:
-      value0: 2391579385
+      value0: 3159632898
       value1: 0
       value2: 0
       value3: 0
     guid: 0
-    name: UniversalRenderPipelineGlobalSettings.asset
+    name: gold_box
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: UniversalRenderPipelineGlobalSettings.asset
+    - name: gold_box
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
@@ -192,7 +192,7 @@ ScriptedImporter:
         y: 0
         width: 26
         height: 39
-      spriteId: 9dcf98503da1446ddbb3e10726f660e8
+      spriteId: e0a63df0d721c4478a87fc96ec31ca18
     linkedCells: []
     tileCells: []
     tileSetIndex: 0

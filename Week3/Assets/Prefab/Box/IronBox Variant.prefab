@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &8889375719297287743
+--- !u!1001 &7074517083090004390
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -8,30 +8,15 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4215214268342380209, guid: ac62133cdb563429ca669451fffc7475,
-        type: 3}
-      propertyPath: m_SpriteTilingProperty.pivot.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4215214268342380209, guid: ac62133cdb563429ca669451fffc7475,
-        type: 3}
-      propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.8125
-      objectReference: {fileID: 0}
-    - target: {fileID: 4215214268342380209, guid: ac62133cdb563429ca669451fffc7475,
-        type: 3}
-      propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 1.21875
-      objectReference: {fileID: 0}
     - target: {fileID: 4611197024400203642, guid: ac62133cdb563429ca669451fffc7475,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.02
+      value: 2.52
       objectReference: {fileID: 0}
     - target: {fileID: 4611197024400203642, guid: ac62133cdb563429ca669451fffc7475,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.6831379
+      value: -2.24
       objectReference: {fileID: 0}
     - target: {fileID: 4611197024400203642, guid: ac62133cdb563429ca669451fffc7475,
         type: 3}
@@ -77,23 +62,18 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 5719517205190724692, guid: dbb10a9c9bd924151af4a1d2e96f8fb1,
+      objectReference: {fileID: 2381083049797049773, guid: 09b11b78173384cb3b3093a0110c54d5,
         type: 3}
-    - target: {fileID: 5085001906914775785, guid: ac62133cdb563429ca669451fffc7475,
-        type: 3}
-      propertyPath: m_WasSpriteAssigned
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8340704597930945091, guid: ac62133cdb563429ca669451fffc7475,
         type: 3}
       propertyPath: m_Name
-      value: StoneBox Variant
+      value: IronBox Variant
       objectReference: {fileID: 0}
     - target: {fileID: 8555576781797794440, guid: ac62133cdb563429ca669451fffc7475,
         type: 3}
       propertyPath: boxData
       value: 
-      objectReference: {fileID: 11400000, guid: 51c7d839792114116b9b3f84c83d7147,
+      objectReference: {fileID: 11400000, guid: c836e53ddd5d340b3a23955ae39f5eef,
         type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
