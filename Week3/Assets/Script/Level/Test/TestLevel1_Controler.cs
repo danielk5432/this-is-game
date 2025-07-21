@@ -49,16 +49,27 @@ public class TestLevelController : BaseLevelController
 
         if (availableMachines.Count > 0)
         {
-            // Pick one random machine from the available list.
             BaseMachineController machineToBreak = availableMachines[Random.Range(0, availableMachines.Count)];
-
-            // Randomly generate a list of required boxes.
             List<BoxData> requirements = new List<BoxData>();
             int requiredCount = Random.Range(minRequiredParts, maxRequiredParts + 1);
 
+            // --- SELECTION LOGIC CHANGED (TO AVOID DUPLICATES) ---
+            // Create a temporary pool of available boxes to pick from.
+            List<BoxData> availableBoxesPool = new List<BoxData>(possibleRequiredBoxes);
+
             for (int i = 0; i < requiredCount; i++)
             {
-                requirements.Add(possibleRequiredBoxes[Random.Range(0, possibleRequiredBoxes.Count)]);
+                // If the pool is empty (e.g., asking for 4 items when there are only 3 types),
+                // stop trying to add more requirements.
+                if (availableBoxesPool.Count == 0) break;
+
+                // Pick a random box from the pool.
+                int randomIndex = Random.Range(0, availableBoxesPool.Count);
+                BoxData selectedBox = availableBoxesPool[randomIndex];
+                
+                // Add it to the requirements and remove it from the pool to prevent re-selection.
+                requirements.Add(selectedBox);
+                availableBoxesPool.RemoveAt(randomIndex);
             }
 
             // Tell the machine to break with the generated requirements.

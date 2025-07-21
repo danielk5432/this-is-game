@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq; // Used for easy list display
+using UnityEngine.UI; // For UI components like Image
 
 public class BaseMachineController : MonoBehaviour, IInteractable
 {
@@ -22,23 +23,22 @@ public class BaseMachineController : MonoBehaviour, IInteractable
 
     [Tooltip("The exclamation mark indicator object.")]
     public GameObject exclamationMarkObject;
+    [Tooltip("Optional particle effect for visual feedback when the machine is repaired.")]
+    public ParticleSystem clearEffect; // Optional particle effect for visual feedback
 
-    [Tooltip("The UI Text component to show the required box count (Use TextMeshPro).")]
-public TMPro.TextMeshProUGUI boxCountText; // TextMeshPro를 사용하는 것을 강력히 추천합니다.
+    [Tooltip("The parent object that will hold the required icons.")]
+    public Transform iconContainer; // 👈 아이콘들을 담을 컨테이너
+    
+    [Tooltip("The prefab for a single UI icon.")]
+    public GameObject iconPrefab; // 👈 아이콘 UI 프리팹
+    
+    private List<GameObject> spawnedIcons = new List<GameObject>();
 
     // --- Private State Variables ---
     private List<BoxData> requiredBoxes = new List<BoxData>();
     private List<BoxData> insertedBoxes = new List<BoxData>();
-    private GUIStyle stateLabelStyle;
-
     private void Awake()
     {
-        // Initialize the GUIStyle for the state label.
-        stateLabelStyle = new GUIStyle();
-        stateLabelStyle.fontSize = 16;
-        stateLabelStyle.fontStyle = FontStyle.Bold;
-        stateLabelStyle.normal.textColor = Color.yellow; // Machine status color
-        stateLabelStyle.alignment = TextAnchor.MiddleCenter;
         UpdateVisuals(currentState);
     }
 
@@ -54,31 +54,45 @@ public TMPro.TextMeshProUGUI boxCountText; // TextMeshPro를 사용하는 것을
         normalStateObject.SetActive(false);
         brokenStateObject.SetActive(false);
         exclamationMarkObject.SetActive(false);
-        if(boxCountText != null) boxCountText.gameObject.SetActive(false);
+        foreach (var icon in spawnedIcons)
+        {
+            Destroy(icon);
+        }
+        spawnedIcons.Clear();
+        
 
         // 현재 상태에 맞는 요소만 다시 켭니다.
         switch (state)
         {
             case MachineState.NORMAL:
                 normalStateObject.SetActive(true);
-                brokenStateObject.SetActive(false);
-                exclamationMarkObject.SetActive(false);
                 break;
 
             case MachineState.BROKEN:
-                normalStateObject.SetActive(false);
                 brokenStateObject.SetActive(true);
                 exclamationMarkObject.SetActive(true);
                 break;
 
             case MachineState.DIAGNOSED:
-                exclamationMarkObject.SetActive(false);
                 brokenStateObject.SetActive(true);
-                if (boxCountText != null)
+                var tempInserted = new List<BoxData>(insertedBoxes);
+                foreach (var required in requiredBoxes)
                 {
-                    boxCountText.gameObject.SetActive(true);
-                    // 필요한 박스 개수 / 넣은 박스 개수를 표시
-                    boxCountText.text = insertedBoxes.Count + " / " + requiredBoxes.Count;
+                    GameObject iconInstance = Instantiate(iconPrefab, iconContainer);
+                    Image iconImage = iconInstance.GetComponent<Image>();
+                    iconImage.sprite = required.icon;
+
+                    // Check if this required box has a match in the temporary inserted list.
+                    if (tempInserted.Contains(required))
+                    {
+                        iconImage.color = new Color(0.3f, 0.3f, 0.3f); // Darken if inserted
+                        tempInserted.Remove(required); // Remove to handle duplicates correctly
+                    }
+                    else
+                    {
+                        iconImage.color = Color.white;
+                    }
+                    spawnedIcons.Add(iconInstance);
                 }
                 break;
         }
@@ -95,18 +109,15 @@ public TMPro.TextMeshProUGUI boxCountText; // TextMeshPro를 사용하는 것을
             screenPos.y = Screen.height - screenPos.y;
             // Display current state
             Rect labelRect = new Rect(screenPos.x - 100, screenPos.y - 60, 200, 30);
-            GUI.Label(labelRect, "State: " + currentState.ToString(), stateLabelStyle);
 
             // If diagnosed, display the required boxes
             if (currentState == MachineState.DIAGNOSED)
             {
                 string requiredText = "NEEDS: " + string.Join(", ", requiredBoxes.Select(b => b.boxName));
                 Rect requiredRect = new Rect(screenPos.x - 100, screenPos.y - 40, 200, 30);
-                GUI.Label(requiredRect, requiredText, stateLabelStyle);
 
                 string insertedText = "INSERTED: " + string.Join(", ", insertedBoxes.Select(b => b.boxName));
                 Rect insertedRect = new Rect(screenPos.x - 100, screenPos.y - 20, 200, 30);
-                GUI.Label(insertedRect, insertedText, stateLabelStyle);
             }
         }
     }
@@ -149,12 +160,20 @@ public TMPro.TextMeshProUGUI boxCountText; // TextMeshPro를 사용하는 것을
                 BoxData heldBox = player.GetTopBoxData();
                 if (heldBox != null)
                 {
-                    // Check if the player is holding the NEXT required box in the sequence.
-                    if (requiredBoxes.Count > insertedBoxes.Count && heldBox.boxID == requiredBoxes[insertedBoxes.Count].boxID)
+                    // Count how many of this box type are required.
+                    int requiredCount = requiredBoxes.Count(box => box.boxID == heldBox.boxID);
+                    // Count how many have already been inserted.
+                    int insertedCount = insertedBoxes.Count(box => box.boxID == heldBox.boxID);
+
+                    // If we still need more of this box type, accept it.
+                    if (insertedCount < requiredCount)
                     {
                         Debug.Log("Correct part inserted: " + heldBox.boxName);
                         insertedBoxes.Add(heldBox);
                         player.ConsumeTopBox();
+                        
+                        // --- UPDATE VISUALS IMMEDIATELY ---
+                        UpdateVisuals(currentState); // Refresh icons to show the newly inserted box.
 
                         // Check if all parts have been inserted.
                         if (insertedBoxes.Count == requiredBoxes.Count)
@@ -181,6 +200,6 @@ public TMPro.TextMeshProUGUI boxCountText; // TextMeshPro를 사용하는 것을
         ChangeState(MachineState.NORMAL);
         requiredBoxes.Clear();
         insertedBoxes.Clear();
-        // You can add repair visual effects here.
+        clearEffect?.Play(); // Play the clear effect if assigned
     }
 }
