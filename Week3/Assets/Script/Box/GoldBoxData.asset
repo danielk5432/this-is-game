@@ -19,4 +19,5 @@ MonoBehaviour:
 
 '
   icon: {fileID: -2644078453000279149, guid: dbc26237d65ba4ea3a4965a5600e1a50, type: 3}
-  boxPrefab: {fileID: 0}
+  boxPrefab: {fileID: 874964405743145987, guid: 7bfdc38922b224cb5a01b65c086559b1,
+    type: 3}

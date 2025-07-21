@@ -19,4 +19,5 @@ MonoBehaviour:
 
     hevier then wooden box'
   icon: {fileID: 1006696194219323979, guid: dbc26237d65ba4ea3a4965a5600e1a50, type: 3}
-  boxPrefab: {fileID: 0}
+  boxPrefab: {fileID: 620734488377732220, guid: 1027cfdbb008749078d9d4fb08dc1dbd,
+    type: 3}

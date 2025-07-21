@@ -52,5 +52,11 @@ TagManager:
   - name: Layer 3
     uniqueID: 4189426099
     locked: 0
+  - name: Effects
+    uniqueID: 2338627937
+    locked: 0
+  - name: UI
+    uniqueID: 1593916817
+    locked: 0
   m_RenderingLayers:
   - Default
