@@ -114,10 +114,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 3
   headPosition: {fileID: 122509755674843692}
-  boxTag: Box
-  pickupRadius: 1
+  interactionRadius: 1
   dropOffset: 1
-  boxHeightOffset: 0.3
   shrinkAmountPerWeight: 0.02
   minHeightScale: 0.5
 --- !u!1 &7551458985762427675

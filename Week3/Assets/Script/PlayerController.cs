@@ -3,23 +3,23 @@ using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("이동 설정")]
+    [Header("Movement Settings")]
     public float moveSpeed = 3f;
 
-    [Header("상자 들기/놓기")]
-    public Transform headPosition;           // 머리 위 위치
-    public string boxTag = "Box";            // 상자 Tag
-    public float pickupRadius = 1f;
+    [Header("Interaction Settings")]
+    public Transform headPosition; // The initial stacking point on the player's head.
+    public float interactionRadius = 1f;
     public float dropOffset = 1f;
 
-    [Header("캐릭터 스케일")]
+    [Header("Character Scale")]
     public float shrinkAmountPerWeight = 0.02f;
     public float minHeightScale = 0.5f;
 
+    // --- Private Variables ---
     private Vector2 dir;
     private Vector2 lookDirection = Vector2.down;
     private Rigidbody2D rb;
-    private List<GameObject> carriedBoxes = new List<GameObject>();
+    private readonly List<GameObject> carriedBoxes = new List<GameObject>();
     private float originalHeightScaleY;
     private float originalScaleX;
     private Animator animator;
@@ -34,47 +34,17 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        dir = Vector2.zero;
-        
-        if (Input.GetKey(KeyCode.A))
-        {
-            dir.x = -1;
-            lookDirection = Vector2.left;
-            animator.SetInteger("Direction", 3);
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            dir.x = 1;
-            lookDirection = Vector2.right;
-            animator.SetInteger("Direction", 2);
-        }
+        HandleMovementInput();
 
-        if (Input.GetKey(KeyCode.W))
-        {
-            dir.y = 1;
-            lookDirection = Vector2.up;
-            animator.SetInteger("Direction", 1);
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            dir.y = -1;
-            lookDirection = Vector2.down;
-            animator.SetInteger("Direction", 0);
-        }
-
-        dir.Normalize();
-        animator.SetBool("IsMoving", dir.magnitude > 0);
-
-        GetComponent<Rigidbody2D>().linearVelocity = moveSpeed * dir;
-        // 줍기
         if (Input.GetKeyDown(KeyCode.E))
-            TryPickupBox();
+        {
+            TryInteract();
+        }
 
-        // 내려놓기
         if (Input.GetKeyDown(KeyCode.Q))
             DropTopBox();
 
-        UpdateCarriedBoxesPosition();
+        // The UpdateCarriedBoxesPosition() call is now removed.
     }
 
     void FixedUpdate()
@@ -82,95 +52,124 @@ public class PlayerController : MonoBehaviour
         rb.MovePosition(rb.position + dir * moveSpeed * Time.fixedDeltaTime);
     }
 
-    void TryPickupBox()
+    void TryInteract()
     {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, pickupRadius);
+        // Find the closest IInteractable object.
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactionRadius, 1 << gameObject.layer);
+        IInteractable closestInteractable = null;
+        float minDistance = float.MaxValue;
         foreach (var hit in hits)
         {
-            if (hit.CompareTag(boxTag) && !carriedBoxes.Contains(hit.gameObject))
+            Debug.Log("Found interactable: " + hit.name);
+            IInteractable interactable = hit.GetComponent<IInteractable>();
+            if (interactable != null)
             {
-                GameObject box = hit.gameObject;
-
-                // Rigidbody 비활성화
-                var rb2d = box.GetComponent<Rigidbody2D>();
-                if (rb2d != null) rb2d.simulated = false;
-
-                // 스택에 추가
-                carriedBoxes.Add(box);
-
-                // 무게 → 키 줄이기
-                float weight = GetBoxWeight(box);
-                ShrinkHeight(weight);
-                return;
+                float distance = Vector2.Distance(transform.position, hit.transform.position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestInteractable = interactable;
+                }
             }
         }
+        
+        // If an object is found and is interactable, perform the interaction.
+        if (closestInteractable != null && closestInteractable.IsInteractable())
+        {
+            closestInteractable.Interact(this);
+        }
     }
+    
+    // --- Public methods called by other scripts (like BaseBox and BaseBoxGenerator) ---
+    
+    public void PickupBox(BaseBox box)
+    {
+        if (carriedBoxes.Contains(box.gameObject)) return;
 
+        // Determine the parent transform for stacking.
+        Transform parentTarget = headPosition;
+        if (carriedBoxes.Count > 0)
+        {
+            // Find the "HeadPoint" of the current top box.
+            Transform topBoxHeadPoint = carriedBoxes[carriedBoxes.Count - 1].transform.Find("HeadPoint");
+            if (topBoxHeadPoint != null)
+            {
+                parentTarget = topBoxHeadPoint;
+            }
+        }
+        
+        // Add to inventory and update scale.
+        carriedBoxes.Add(box.gameObject);
+        ShrinkHeight(GetBoxWeight(box.gameObject));
+        
+        // Tell the box it has been picked up and where to attach.
+        box.OnPickup(parentTarget);
+    }
+    
+    public void ReceiveBox(BoxData boxData, GameObject boxInstance)
+    {
+        if (boxInstance == null) return;
+        
+        BaseBox boxComponent = boxInstance.GetComponent<BaseBox>();
+        if(boxComponent != null)
+        {
+            // Use the same pickup logic to add the newly created box to the stack.
+            PickupBox(boxComponent);
+        }
+    }
+    
+    public void ConsumeTopBox()
+    {
+        if (carriedBoxes.Count == 0) return;
+        GameObject topBox = carriedBoxes[carriedBoxes.Count - 1];
+        carriedBoxes.RemoveAt(carriedBoxes.Count - 1);
+        
+        RestoreHeight(GetBoxWeight(topBox));
+        Destroy(topBox);
+    }
+    
+    public BoxData GetTopBoxData()
+    {
+        if (carriedBoxes.Count == 0) return null;
+        BaseBox boxComponent = carriedBoxes[carriedBoxes.Count - 1].GetComponent<BaseBox>();
+        return boxComponent != null ? boxComponent.boxData : null;
+    }
+    
     void DropTopBox()
     {
         if (carriedBoxes.Count == 0) return;
 
-        GameObject topBox = carriedBoxes[carriedBoxes.Count - 1];
+        GameObject topBoxObject = carriedBoxes[carriedBoxes.Count - 1];
         carriedBoxes.RemoveAt(carriedBoxes.Count - 1);
+        
+        RestoreHeight(GetBoxWeight(topBoxObject));
 
-        // 내려놓을 위치
-        Vector2 dropPos = (Vector2)transform.position + lookDirection * dropOffset;
-        topBox.transform.position = dropPos;
-
-        // Rigidbody 다시 켜기
-        var rb2d = topBox.GetComponent<Rigidbody2D>();
-        if (rb2d != null) rb2d.simulated = true;
-
-        // 키 복구
-        float weight = GetBoxWeight(topBox);
-        RestoreHeight(weight);
+        BaseBox boxComponent = topBoxObject.GetComponent<BaseBox>();
+        if (boxComponent != null)
+        {
+            Vector2 dropPos = (Vector2)transform.position + lookDirection * dropOffset;
+            boxComponent.OnDrop(dropPos);
+        }
     }
 
-    void UpdateCarriedBoxesPosition()
+    // --- Unchanged Methods ---
+
+    void HandleMovementInput()
     {
-        Vector3 currentPos = headPosition.position;
-        float baseZ = transform.position.z;
+        dir = Vector2.zero;
+        if (Input.GetKey(KeyCode.A)) { dir.x = -1; lookDirection = Vector2.left; animator.SetInteger("Direction", 3); }
+        else if (Input.GetKey(KeyCode.D)) { dir.x = 1; lookDirection = Vector2.right; animator.SetInteger("Direction", 2); }
 
-        for (int i = 0; i < carriedBoxes.Count; i++)
-        {
-            GameObject box = carriedBoxes[i];
-            Transform headPoint = box.transform.Find("HeadPoint");
-
-            if (i == 0)
-            {
-                Vector3 newPos = currentPos;
-                newPos.z = baseZ - 1f - (i * 1f);
-                box.transform.position = newPos;
-                continue;
-            }
-
-            if (headPoint != null)
-            {
-                // HeadPoint가 Box에서 얼마나 떨어져 있는지 (로컬 오프셋 기준)
-                Vector3 localOffset = headPoint.position - box.transform.position;
-                Debug.Log(localOffset);
-
-                // 위치 = 현재 쌓인 기준점 + offset
-                Vector3 newPos = currentPos + localOffset;
-
-                // 위에 갈수록 더 앞으로
-                newPos.z = baseZ - 1f - (i * 1f);
-
-                // 적용
-                box.transform.position = newPos;
-
-                // 다음 박스를 쌓을 기준 위치는 현재 상자의 HeadPoint
-                currentPos = newPos;
-            }
-            else
-            {
-                Debug.LogWarning("HeadPoint가 설정되지 않은 상자가 있음: " + box.name);
-            }
-        }
+        if (Input.GetKey(KeyCode.W)) { dir.y = 1; lookDirection = Vector2.up; animator.SetInteger("Direction", 1); }
+        else if (Input.GetKey(KeyCode.S)) { dir.y = -1; lookDirection = Vector2.down; animator.SetInteger("Direction", 0); }
+        
+        dir.Normalize();
+        animator.SetBool("IsMoving", dir.magnitude > 0);
     }
 
     float GetBoxWeight(GameObject box)
     {
+        // This could be simplified to get weight from BoxData in the future.
         var rb2d = box.GetComponent<Rigidbody2D>();
         return rb2d != null ? rb2d.mass : 1f;
     }
@@ -179,7 +178,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 scale = transform.localScale;
         scale.y = Mathf.Max(minHeightScale, scale.y - weight * shrinkAmountPerWeight);
-        scale.x = originalScaleX; // X축은 유지
+        scale.x = originalScaleX;
         transform.localScale = scale;
     }
 
@@ -187,7 +186,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 scale = transform.localScale;
         scale.y = Mathf.Min(originalHeightScaleY, scale.y + weight * shrinkAmountPerWeight);
-        scale.x = originalScaleX; // X축은 유지
+        scale.x = originalScaleX;
         transform.localScale = scale;
     }
 }

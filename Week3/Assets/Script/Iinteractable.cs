@@ -1,3 +1,4 @@
+// IInteractable.cs
 using UnityEngine;
 
 /// <summary>
@@ -8,16 +9,12 @@ public interface IInteractable
     /// <summary>
     /// Checks if the object is currently available for interaction.
     /// </summary>
-    /// <returns>True if interactable, false otherwise.</returns>
+    /// <returns>True if the object can be interacted with, false otherwise.</returns>
     bool IsInteractable();
 
     /// <summary>
-    /// Called when the player interacts with this object.
+    /// Called by the player to perform an interaction.
     /// </summary>
-    /// <param name="heldBox">The box data the player is holding. Can be null.</param>
-    /// <returns>The data of a box given to the player. Null if no item was given.</returns>
-    BoxData OnInteract(BoxData heldBox);
-
-    // (Optional) A way for other scripts to get a reference to the GameObject.
-    GameObject GetGameObject(); 
+    /// <param name="player">The PlayerController instance that is initiating the interaction.</param>
+    void Interact(PlayerController player);
 }
