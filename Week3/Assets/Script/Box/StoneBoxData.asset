@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: StoneBoxData
   m_EditorClassIdentifier: 
   boxID: 1
-  boxName: WoodBox
-  weight: 1
-  description: 'Wooden Box
+  boxName: StoneBox
+  weight: 2
+  description: 'Stone Box
 
-'
+    hevier then wooden box'
   icon: {fileID: 0}
   boxPrefab: {fileID: 0}
