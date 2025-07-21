@@ -18,6 +18,10 @@ public class PlayerController : MonoBehaviour
     public float shrinkAmountPerWeight = 0.02f;
     public float minHeightScale = 0.5f;
 
+    [Header("Stun Settings")]
+    public bool isStunned = false;
+    public float stunDuration = 3f;
+
     // --- Private Variables ---
     private Vector2 dir;
     private Vector2 lookDirection = Vector2.down;
@@ -28,6 +32,7 @@ public class PlayerController : MonoBehaviour
     private float currentMoveSpeed;
     private float totalWeight = 0f;
     private Animator animator;
+    private float stunTimer = 0f;
 
     void Awake()
     {
@@ -39,6 +44,12 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (isStunned)
+        {
+            Stun();
+            return;
+        }
+
         HandleMovementInput();
 
         UpdateSpeedByWeight();
@@ -203,7 +214,6 @@ public class PlayerController : MonoBehaviour
 
     void UpdateSpeedByWeight()
     {
-        Debug.Log("totalWeight: " + totalWeight);
         if (totalWeight < 16) 
         {
             currentMoveSpeed = baseMoveSpeed - totalWeight * speedDecreasePerWeight;
@@ -255,5 +265,23 @@ public class PlayerController : MonoBehaviour
                 Debug.LogWarning("HeadPoint가 설정되지 않은 상자가 있음: " + box.name);
             }
         }
+    }
+
+    public void SetStun()
+    {
+        isStunned = true;
+        stunTimer = stunDuration;
+    }
+
+    void Stun()
+    {
+        stunTimer -= Time.deltaTime;
+        if (stunTimer <= 0f)
+        {
+            isStunned = false;
+        }
+        dir = Vector2.zero;
+        animator.SetBool("IsMoving", false);
+        return;
     }
 }
