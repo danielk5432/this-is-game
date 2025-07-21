@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &7074517083090004390
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4611197024400203642, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.52
+      objectReference: {fileID: 0}
+    - target: {fileID: 4611197024400203642, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.24
+      objectReference: {fileID: 0}
+    - target: {fileID: 4611197024400203642, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4611197024400203642, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4611197024400203642, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4611197024400203642, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4611197024400203642, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4611197024400203642, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4611197024400203642, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4611197024400203642, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5085001906914775785, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 2381083049797049773, guid: 09b11b78173384cb3b3093a0110c54d5,
+        type: 3}
+    - target: {fileID: 8340704597930945091, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: m_Name
+      value: IronBox Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 8555576781797794440, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: boxData
+      value: 
+      objectReference: {fileID: 11400000, guid: c836e53ddd5d340b3a23955ae39f5eef,
+        type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ac62133cdb563429ca669451fffc7475, type: 3}
