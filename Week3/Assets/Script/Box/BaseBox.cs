@@ -34,7 +34,7 @@ public class BaseBox : MonoBehaviour, IInteractable
         isHeld = true;
         if (rb != null) rb.simulated = false;
         transform.SetParent(parent);
-        transform.localPosition = Vector3.zero; // Reset position relative to parent.
+        // transform.localPosition = Vector3.zero; // Reset position relative to parent.
     }
 
     public void OnDrop(Vector2 dropPosition)
