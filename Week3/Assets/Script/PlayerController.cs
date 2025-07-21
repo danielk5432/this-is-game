@@ -4,7 +4,10 @@ using System.Collections.Generic;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float moveSpeed = 3f;
+    public float baseMoveSpeed = 4f;
+    public float minMoveSpeed = 0.1f;
+    public float speedDecreasePerWeight = 0.1f;
+    public float speedDecreasePerWeightOver15 = 0.2f;
 
     [Header("Interaction Settings")]
     public Transform headPosition; // The initial stacking point on the player's head.
@@ -22,6 +25,8 @@ public class PlayerController : MonoBehaviour
     private readonly List<GameObject> carriedBoxes = new List<GameObject>();
     private float originalHeightScaleY;
     private float originalScaleX;
+    private float currentMoveSpeed;
+    private float totalWeight = 0f;
     private Animator animator;
 
     void Awake()
@@ -36,6 +41,9 @@ public class PlayerController : MonoBehaviour
     {
         HandleMovementInput();
 
+        UpdateSpeedByWeight();
+        GetComponent<Rigidbody2D>().linearVelocity = currentMoveSpeed * dir;
+
         if (Input.GetKeyDown(KeyCode.E))
         {
             TryInteract();
@@ -44,12 +52,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q))
             DropTopBox();
 
-        // The UpdateCarriedBoxesPosition() call is now removed.
+        UpdateCarriedBoxesPosition();
     }
 
     void FixedUpdate()
     {
-        rb.MovePosition(rb.position + dir * moveSpeed * Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + dir * currentMoveSpeed * Time.fixedDeltaTime);
     }
 
     void TryInteract()
@@ -100,6 +108,7 @@ public class PlayerController : MonoBehaviour
         
         // Add to inventory and update scale.
         carriedBoxes.Add(box.gameObject);
+        totalWeight += GetBoxWeight(box.gameObject);
         ShrinkHeight(GetBoxWeight(box.gameObject));
         
         // Tell the box it has been picked up and where to attach.
@@ -124,6 +133,7 @@ public class PlayerController : MonoBehaviour
         GameObject topBox = carriedBoxes[carriedBoxes.Count - 1];
         carriedBoxes.RemoveAt(carriedBoxes.Count - 1);
         
+        totalWeight -= GetBoxWeight(topBox);
         RestoreHeight(GetBoxWeight(topBox));
         Destroy(topBox);
     }
@@ -142,6 +152,7 @@ public class PlayerController : MonoBehaviour
         GameObject topBoxObject = carriedBoxes[carriedBoxes.Count - 1];
         carriedBoxes.RemoveAt(carriedBoxes.Count - 1);
         
+        totalWeight -= GetBoxWeight(topBoxObject);
         RestoreHeight(GetBoxWeight(topBoxObject));
 
         BaseBox boxComponent = topBoxObject.GetComponent<BaseBox>();
@@ -157,11 +168,11 @@ public class PlayerController : MonoBehaviour
     void HandleMovementInput()
     {
         dir = Vector2.zero;
-        if (Input.GetKey(KeyCode.A)) { dir.x = -1; lookDirection = Vector2.left; animator.SetInteger("Direction", 3); }
-        else if (Input.GetKey(KeyCode.D)) { dir.x = 1; lookDirection = Vector2.right; animator.SetInteger("Direction", 2); }
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) { dir.x = -1; lookDirection = Vector2.left; animator.SetInteger("Direction", 3); }
+        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) { dir.x = 1; lookDirection = Vector2.right; animator.SetInteger("Direction", 2); }
 
-        if (Input.GetKey(KeyCode.W)) { dir.y = 1; lookDirection = Vector2.up; animator.SetInteger("Direction", 1); }
-        else if (Input.GetKey(KeyCode.S)) { dir.y = -1; lookDirection = Vector2.down; animator.SetInteger("Direction", 0); }
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) { dir.y = 1; lookDirection = Vector2.up; animator.SetInteger("Direction", 1); }
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) { dir.y = -1; lookDirection = Vector2.down; animator.SetInteger("Direction", 0); }
         
         dir.Normalize();
         animator.SetBool("IsMoving", dir.magnitude > 0);
@@ -188,5 +199,61 @@ public class PlayerController : MonoBehaviour
         scale.y = Mathf.Min(originalHeightScaleY, scale.y + weight * shrinkAmountPerWeight);
         scale.x = originalScaleX;
         transform.localScale = scale;
+    }
+
+    void UpdateSpeedByWeight()
+    {
+        Debug.Log("totalWeight: " + totalWeight);
+        if (totalWeight < 16) 
+        {
+            currentMoveSpeed = baseMoveSpeed - totalWeight * speedDecreasePerWeight;
+        }
+        else
+        {
+            currentMoveSpeed = baseMoveSpeed - 15f * speedDecreasePerWeight - (totalWeight - 15f) * speedDecreasePerWeightOver15;
+        }
+        currentMoveSpeed = Mathf.Max(minMoveSpeed, currentMoveSpeed);
+    }
+
+    void UpdateCarriedBoxesPosition()
+    {
+        Vector3 currentPos = headPosition.position;
+        float baseZ = transform.position.z;
+
+        for (int i = 0; i < carriedBoxes.Count; i++)
+        {
+            GameObject box = carriedBoxes[i];
+            Transform headPoint = box.transform.Find("HeadPoint");
+
+            if (i == 0)
+            {
+                Vector3 newPos = currentPos;
+                newPos.z = baseZ - 1f - (i * 1f);
+                box.transform.position = newPos;
+                continue;
+            }
+
+            if (headPoint != null)
+            {
+                // HeadPoint가 Box에서 얼마나 떨어져 있는지 (로컬 오프셋 기준)
+                Vector3 localOffset = headPoint.position - box.transform.position;
+
+                // 위치 = 현재 쌓인 기준점 + offset
+                Vector3 newPos = currentPos + localOffset;
+
+                // 위에 갈수록 더 앞으로
+                newPos.z = baseZ - 1f - (i * 1f);
+
+                // 적용
+                box.transform.position = newPos;
+
+                // 다음 박스를 쌓을 기준 위치는 현재 상자의 HeadPoint
+                currentPos = newPos;
+            }
+            else
+            {
+                Debug.LogWarning("HeadPoint가 설정되지 않은 상자가 있음: " + box.name);
+            }
+        }
     }
 }
