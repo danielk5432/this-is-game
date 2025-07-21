@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1bcaa45870af492eb1a485958604820, type: 3}
   m_Name: GoldBoxData
   m_EditorClassIdentifier: 
-  boxID: 2
-  boxName: IronBox
-  weight: 2
-  description: 'Iron Box
+  boxID: 3
+  boxName: GoldBox
+  weight: 3
+  description: 'Gold Box
 
 '
-  icon: {fileID: 0}
+  icon: {fileID: -2644078453000279149, guid: dbc26237d65ba4ea3a4965a5600e1a50, type: 3}
   boxPrefab: {fileID: 0}

@@ -18,5 +18,5 @@ MonoBehaviour:
   description: 'Stone Box
 
     hevier then wooden box'
-  icon: {fileID: 0}
+  icon: {fileID: 1006696194219323979, guid: dbc26237d65ba4ea3a4965a5600e1a50, type: 3}
   boxPrefab: {fileID: 0}

@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1bcaa45870af492eb1a485958604820, type: 3}
   m_Name: DiamondBoxData
   m_EditorClassIdentifier: 
-  boxID: 
-  boxName: 
-  weight: 1
-  description: 
-  icon: {fileID: 0}
+  boxID: 4
+  boxName: DiamondBox
+  weight: 2
+  description: Diamond Box
+  icon: {fileID: 2627982312142092835, guid: dbc26237d65ba4ea3a4965a5600e1a50, type: 3}
   boxPrefab: {fileID: 0}

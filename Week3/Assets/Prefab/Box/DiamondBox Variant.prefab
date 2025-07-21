@@ -74,6 +74,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: DiamondBox Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 8555576781797794440, guid: ac62133cdb563429ca669451fffc7475,
+        type: 3}
+      propertyPath: boxData
+      value: 
+      objectReference: {fileID: 11400000, guid: 705fd05682bea4a16bf0747dfe9de587,
+        type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
