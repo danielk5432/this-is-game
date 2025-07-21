@@ -6,10 +6,12 @@ public class BaseBox : MonoBehaviour, IInteractable
     public BoxData boxData;
     private bool isHeld = false;
     private Rigidbody2D rb;
+    private Vector3 originalScale;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        originalScale = transform.localScale;
     }
 
     public bool IsInteractable()
@@ -40,6 +42,7 @@ public class BaseBox : MonoBehaviour, IInteractable
         isHeld = false;
         transform.SetParent(null);
         transform.position = dropPosition;
+        transform.localScale = originalScale; // Reset scale to original.
         if (rb != null) rb.simulated = true;
     }
 }
