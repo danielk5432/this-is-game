@@ -6,7 +6,7 @@ TagManager:
   tags:
   - Portal
   - Box
-  - GhostEnemy
+  - Enemy
   layers:
   - Default
   - TransparentFX
