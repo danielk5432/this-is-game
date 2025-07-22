@@ -38,24 +38,39 @@ public class Map_East_Controller : BaseLevelController
         if (!firstRepairDone)
         {
             firstRepairDone = true;
-            SpawnEnemy();
-            /*
-            if (spawnManager != null)
-            {
-                Debug.Log("First repair complete! Enemies will now spawn.");
-                spawnManager.StartSpawning(); // Assuming SpawnManager has this method.
-            }
-            */
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Ghost);
+        }
+        else if (currentRepairs == 2)
+        {
+            requiredPartsCount = 2;
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.BombRain);
+        }
+        else if (currentRepairs == 3)
+        {
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Burst);
+        }
+        else if (currentRepairs == 4)
+        {
+            requiredPartsCount = 3;
+        }
+        else if (currentRepairs == 5)
+        {
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Burst);
+        }
+        else if (currentRepairs == 6)
+        {
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.BombRain);
         }
     }
-
+    
     private void SpawnEnemy()
     {
         if (spawnManager != null)
         {
             Debug.Log("First repair complete! Enemies will now spawn.");
-            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Ghost); 
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Ghost);
             spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Burst); 
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.BombRain);
         }
     }
 
@@ -82,13 +97,13 @@ public class Map_East_Controller : BaseLevelController
                 // 모든 장치가 수리되었다면, 즉시 짧은 타이머를 실행하고 새 장치를 고장 냄
                 Debug.Log("All machines repaired! Triggering fast breakdown...");
                 yield return new WaitForSeconds(fastBreakdownTime); // 2~3초의 짧은 대기
-                
+
                 if (currentState != LevelState.Playing) yield break;
                 BreakRandomMachine();
-                
+
                 // 일반 타이머를 초기화하고 루프의 처음으로 돌아감
                 periodicTimer = periodicBreakdownTime;
-                continue; 
+                continue;
             }
 
             // 2b. 고장 난 장치가 하나라도 있다면, 일반 타이머를 진행
@@ -122,15 +137,17 @@ public class Map_East_Controller : BaseLevelController
 
         if (availableMachines.Count > 0)
         {
-            // Pick one random machine from the available list.
             BaseMachineController machineToBreak = availableMachines[Random.Range(0, availableMachines.Count)];
             List<BoxData> requirements = new List<BoxData>();
-            // Generate a list of required boxes.
+
+            // --- SELECTION LOGIC CHANGED (TO AVOID DUPLICATES) ---
+            // Create a temporary pool of available boxes to pick from.
             List<BoxData> availableBoxesPool = new List<BoxData>(possibleRequiredBoxes);
 
-            // Loop for the fixed number of required parts.
             for (int i = 0; i < requiredPartsCount; i++)
             {
+                // If the pool is empty (e.g., asking for 4 items when there are only 3 types),
+                // stop trying to add more requirements.
                 if (availableBoxesPool.Count == 0) break;
 
                 // Pick a random box from the pool.
