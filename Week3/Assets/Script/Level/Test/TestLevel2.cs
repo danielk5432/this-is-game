@@ -35,6 +35,10 @@ public class TestLevel2Controller : BaseLevelController
     public float minX = -10f, maxX = 10f, minY = -10f, maxY = 10f;
     public float laserInterval = 15f;
 
+    [Header("Burst Enemy Settings")]
+    public BurstEnemySpawner burstEnemySpawner;
+    public float burstEnemySpawnInterval = 15f;
+
     protected override void InitializeLevel()
     {
         // Find all machines in the current scene and store them.
@@ -47,6 +51,7 @@ public class TestLevel2Controller : BaseLevelController
         StartCoroutine(GhostEnemySpawnRoutine());
         StartCoroutine(BombRainRoutine());
         StartCoroutine(LaserRoutine());
+        StartCoroutine(BurstEnemySpawnRoutine());
     }
 
     private IEnumerator BreakdownRoutine()
@@ -155,6 +160,19 @@ public class TestLevel2Controller : BaseLevelController
 
             GameObject laser = Instantiate(laserPrefab);
             laser.GetComponent<LaserController>().Init(start, direction);
+        }
+    }
+
+    private IEnumerator BurstEnemySpawnRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(burstEnemySpawnInterval);
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                burstEnemySpawner.SpawnNearPlayer(player.transform.position);
+            }
         }
     }
 
