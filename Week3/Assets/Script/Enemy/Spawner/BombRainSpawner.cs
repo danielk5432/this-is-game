@@ -8,7 +8,7 @@ public class BombRainSpawner : MonoBehaviour
     public GameObject bombPrefab;             // 실제 폭탄 프리팹
     public float spawnInterval = 15f;
     public float initialDelay = 3f;
-    public float spawnHeight = 10f;
+    public float spawnHeight = 30f;
 
     private Coroutine runningCoroutine;
     private Transform playerTransform;

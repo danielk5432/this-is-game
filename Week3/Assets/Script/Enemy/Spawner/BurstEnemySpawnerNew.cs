@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Pathfinding;
 
 public class BurstEnemySpawnerNew : MonoBehaviour
 {
@@ -57,22 +58,21 @@ public class BurstEnemySpawnerNew : MonoBehaviour
         }
     }
 
-    // This is your original, effective logic for finding a spawn position.
     private Vector2 GetValidSpawnPosition(Vector2 center, float radius)
     {
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 20; i++) // 20번 시도
         {
-            Vector2 randomOffset = Random.insideUnitCircle.normalized * radius;
-            Vector2 pos = center + randomOffset;
+            Vector2 randomPos = center + (Vector2)Random.insideUnitSphere * radius;
 
-            // Check a small radius to ensure we don't spawn inside something.
-            Collider2D hit = Physics2D.OverlapCircle(pos, 0.5f); 
-            if (hit == null)
+            // A*의 그래프 노드 정보를 가져옴
+            GraphNode node = AstarPath.active.GetNearest(randomPos).node;
+
+            // 해당 노드가 '이동 가능한' 영역인지 확인
+            if (node.Walkable)
             {
-                return pos;
+                return (Vector3)node.position; // 노드의 실제 위치를 반환
             }
         }
-        // Fallback to the center if no valid position is found after 20 tries.
-        return center;
+        return center; // 20번 시도 후에도 못찾으면 그냥 중앙에 생성
     }
 }

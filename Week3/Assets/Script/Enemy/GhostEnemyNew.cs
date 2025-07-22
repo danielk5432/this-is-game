@@ -1,32 +1,45 @@
 using UnityEngine;
+using Pathfinding; // A* Pathfinding Project를 사용하기 위해 필요
 
+[RequireComponent(typeof(Seeker), typeof(AIPath))]
 public class GhostEnemyNew : MonoBehaviour
 {
-    public float moveSpeed = 2f;
     public float stunTime = 2.5f;
     private Transform target;
     private SpriteRenderer spriteRenderer;
-
-    // A variable to remember which spawner created this ghost.
     private GhostEnemySpawnerNew ownerSpawner;
+    private AIPath aiPath;
 
-    /// <summary>
-    /// Called by the spawner right after this ghost is created.
-    /// </summary>
     public void Initialize(GhostEnemySpawnerNew spawner)
     {
         ownerSpawner = spawner;
         target = PlayerSpawner.playerInstance;
         spriteRenderer = GetComponent<SpriteRenderer>();
+        aiPath = GetComponent<AIPath>();
+
+        // AIPath will handle movement, so we need to tell it where to go.
+        if (aiPath != null && target != null)
+        {
+            aiPath.destination = target.position;
+        }
     }
 
     void Update()
     {
         if (target == null) return;
 
-        Vector2 dir = (target.position - transform.position).normalized;
-        transform.position += (Vector3)dir * moveSpeed * Time.deltaTime;
-        spriteRenderer.flipX = dir.x < 0;
+        // Constantly update the destination to follow the player
+        aiPath.destination = target.position;
+
+        // Flip sprite based on the AI's desired velocity
+        if (aiPath.desiredVelocity.x >= 0.01f)
+        {
+            spriteRenderer.flipX = false;
+        }
+        else if (aiPath.desiredVelocity.x <= -0.01f)
+        {
+            spriteRenderer.flipX = true;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -37,7 +50,6 @@ public class GhostEnemyNew : MonoBehaviour
             if (pc != null)
             {
                 pc.SetStun(stunTime);
-                Debug.Log("GhostEnemy hit Player");
                 Die();
             }
         }
@@ -45,10 +57,7 @@ public class GhostEnemyNew : MonoBehaviour
     
     private void Die()
     {
-        // If this ghost knows who its spawner is, report its death.
         ownerSpawner.OnGhostDied();
-
-        // Destroy this ghost instance.
         Destroy(gameObject);
     }
 }

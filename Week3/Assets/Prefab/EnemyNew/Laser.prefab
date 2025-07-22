@@ -49,7 +49,7 @@ MonoBehaviour:
   warningLine: {fileID: 5425990776824389400}
   laserProjectile: {fileID: 2730366913684663092}
   warningTime: 1
-  laserDuration: 2
+  laserDuration: 1
 --- !u!1 &2730366913684663092
 GameObject:
   m_ObjectHideFlags: 0

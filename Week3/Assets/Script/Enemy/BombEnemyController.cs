@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BombEnemyController : MonoBehaviour
 {
-    public float fallSpeed = 30f;
+    public float fallSpeed = 15f;
     public float explosionRadius = 1.5f;
 
     private Vector3 targetPosition;
