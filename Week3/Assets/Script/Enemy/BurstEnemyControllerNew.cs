@@ -30,7 +30,7 @@ public class BurstEnemyControllerNew : MonoBehaviour
         foreach (Vector2 dir in directions)
         {
             GameObject proj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-            ProjectileController pc = proj.GetComponent<ProjectileController>();
+            BurstEnemyProjectileController pc = proj.GetComponent<BurstEnemyProjectileController>();
             pc.Initialize(dir, projectileSpeed);
         }
 

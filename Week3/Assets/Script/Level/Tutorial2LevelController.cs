@@ -47,8 +47,9 @@ public class Tutorial2LevelControler : BaseLevelController
         if (spawnManager != null)
         {
             Debug.Log("First repair complete! Enemies will now spawn.");
-            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Ghost); 
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Ghost);
             spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Burst); 
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.BombRain);
         }
     }
 

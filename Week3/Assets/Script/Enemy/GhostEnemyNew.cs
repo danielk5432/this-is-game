@@ -15,13 +15,8 @@ public class GhostEnemyNew : MonoBehaviour
     /// </summary>
     public void Initialize(GhostEnemySpawnerNew spawner)
     {
-        this.ownerSpawner = spawner;
-    }
-
-    void Start()
-    {
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null) target = playerObj.transform;
+        ownerSpawner = spawner;
+        target = PlayerSpawner.playerInstance;
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
@@ -43,7 +38,7 @@ public class GhostEnemyNew : MonoBehaviour
             {
                 pc.SetStun(stunTime);
                 Debug.Log("GhostEnemy hit Player");
-                Destroy(gameObject);
+                Die();
             }
         }
     }
@@ -51,10 +46,7 @@ public class GhostEnemyNew : MonoBehaviour
     private void Die()
     {
         // If this ghost knows who its spawner is, report its death.
-        if (ownerSpawner != null)
-        {
-            ownerSpawner.OnGhostDied();
-        }
+        ownerSpawner.OnGhostDied();
 
         // Destroy this ghost instance.
         Destroy(gameObject);
