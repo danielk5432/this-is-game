@@ -22,9 +22,6 @@ public class PlayerController : MonoBehaviour
     public bool isStunned = false;
     public float stunDuration = 3f;
 
-    [Header("Particle Settings")]
-    public GameObject boxBreakParticle;
-
     // --- Private Variables ---
     private Vector2 dir;
     private Vector2 lookDirection = Vector2.down;
