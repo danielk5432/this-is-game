@@ -31,7 +31,7 @@ public class TestLevel2Controller : BaseLevelController
     public BombRainController bombRainController;
     public float bombRainInterval = 15f;
     private bool canSpawnBomb = true;
-    
+
     [Header("Lazer Settings")]
     public GameObject laserPrefab;
     public float minX = -10f, maxX = 10f, minY = -10f, maxY = 10f;
@@ -47,7 +47,7 @@ public class TestLevel2Controller : BaseLevelController
     {
         // Find all machines in the current scene and store them.
         machinesInLevel = new List<BaseMachineController>(FindObjectsByType<BaseMachineController>(FindObjectsSortMode.None));
-        
+
         Debug.Log("Level Initialized. Found " + machinesInLevel.Count + " machines.");
 
         // Start the breakdown cycle.
@@ -109,7 +109,7 @@ public class TestLevel2Controller : BaseLevelController
             if (ghostEnemy == null && !waitingToSpawnGhostEnemy)
             {
                 waitingToSpawnGhostEnemy = true;
-                
+
 
                 if (ghostEnemy == null)
                 {
@@ -201,5 +201,12 @@ public class TestLevel2Controller : BaseLevelController
             Destroy(enemy);
         }
     }
-
+    protected override void OnLevelClear()
+    {
+        Debug.Log("Level cleared!");
+    }
+    protected override void OpenExit()
+    {
+        Debug.Log("Exit opened!");
+    }
 }

@@ -376,8 +376,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -44025399
-  m_SortingLayer: 2
+  m_SortingLayerID: 1593916817
+  m_SortingLayer: 5
   m_SortingOrder: 5
   m_Sprite: {fileID: 2339918147330681585, guid: f725e6f7dabd84fc8967938850f7e747,
     type: 3}
@@ -540,7 +540,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!1 &8556030956206249521
 GameObject:
   m_ObjectHideFlags: 0
@@ -628,7 +628,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!1 &9200635463092545001
 GameObject:
   m_ObjectHideFlags: 0

@@ -201,5 +201,6 @@ public class BaseMachineController : MonoBehaviour, IInteractable
         requiredBoxes.Clear();
         insertedBoxes.Clear();
         clearEffect?.Play(); // Play the clear effect if assigned
+        BaseLevelController.Instance.OnMachineRepaired();
     }
 }

@@ -21,7 +21,7 @@ public class TestLevelController : BaseLevelController
     {
         // Find all machines in the current scene and store them.
         machinesInLevel = new List<BaseMachineController>(FindObjectsByType<BaseMachineController>(FindObjectsSortMode.None));
-        
+
         Debug.Log("Level Initialized. Found " + machinesInLevel.Count + " machines.");
 
         // Start the breakdown cycle.
@@ -66,7 +66,7 @@ public class TestLevelController : BaseLevelController
                 // Pick a random box from the pool.
                 int randomIndex = Random.Range(0, availableBoxesPool.Count);
                 BoxData selectedBox = availableBoxesPool[randomIndex];
-                
+
                 // Add it to the requirements and remove it from the pool to prevent re-selection.
                 requirements.Add(selectedBox);
                 availableBoxesPool.RemoveAt(randomIndex);
@@ -79,5 +79,16 @@ public class TestLevelController : BaseLevelController
         {
             Debug.Log("No available machines to break!");
         }
+    }
+    protected override void OnLevelClear()
+    {
+        // This method can be overridden in child classes to handle level clear logic.
+        Debug.Log("Level cleared! Implement OnLevelClear in your level controller.");
+    }
+
+    protected override void OpenExit()
+    {
+        // This method can be overridden in child classes to handle exit logic.
+        Debug.Log("Exit opened! Implement OpenExit in your level controller.");
     }
 }
