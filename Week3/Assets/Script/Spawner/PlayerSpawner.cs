@@ -9,6 +9,7 @@ public class PlayerSpawner : MonoBehaviour
     {
         // 1. 데이터 모델에서 목표 스폰 ID를 가져옴
         string targetSpawnId = GameDataModel.Instance.nextSpawnPointIdentifier;
+        GameDataModel.Instance.nextSpawnPointIdentifier = "0"; // 스폰 후 ID 초기화
 
         SpawnPoint targetSpawnPoint = null;
 
@@ -16,6 +17,7 @@ public class PlayerSpawner : MonoBehaviour
         SpawnPoint[] allSpawnPoints = FindObjectsByType<SpawnPoint>(FindObjectsSortMode.None);
         foreach (SpawnPoint spawnPoint in allSpawnPoints)
         {
+            Debug.Log("Checking spawn point: " + spawnPoint.spawnIdentifier + " against target: " + targetSpawnId);
             if (spawnPoint.spawnIdentifier == targetSpawnId)
             {
                 targetSpawnPoint = spawnPoint;

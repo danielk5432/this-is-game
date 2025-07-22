@@ -28,7 +28,7 @@ public class BaseBoxGenerator : MonoBehaviour, IInteractable
     {
         if (currentState == GeneratorState.COMPLETE)
         {
-            producedBoxInstance = Instantiate(boxToProduce.boxPrefab, new Vector3(-5000, -5000, 0), Quaternion.identity);
+            ProduceBoxInstance();
         }
         UpdateVisuals(currentState);
     }
@@ -43,7 +43,7 @@ public class BaseBoxGenerator : MonoBehaviour, IInteractable
             animator.SetInteger("State", (int)newState);
             StartCoroutine(AnimationLockRoutine());
         }
-        
+
         UpdateVisuals(newState);
     }
 
@@ -112,7 +112,7 @@ public class BaseBoxGenerator : MonoBehaviour, IInteractable
 
     private void FinishProduction()
     {
-        producedBoxInstance = Instantiate(boxToProduce.boxPrefab, new Vector3(-5000, -5000, 0), Quaternion.identity);
+        ProduceBoxInstance();
         ChangeState(GeneratorState.COMPLETE);
         Debug.Log("Production complete!");
     }
@@ -121,5 +121,9 @@ public class BaseBoxGenerator : MonoBehaviour, IInteractable
         isAnimating = true;
         yield return new WaitForSeconds(animationLength);
         isAnimating = false;
+    }
+    private void ProduceBoxInstance()
+    {
+        producedBoxInstance = Instantiate(boxToProduce.boxPrefab, new Vector3(-5000, -5000, 0), Quaternion.identity, transform.parent);
     }
 }

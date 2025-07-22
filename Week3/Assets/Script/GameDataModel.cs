@@ -1,4 +1,5 @@
-using UnityEngine; 
+using UnityEngine;
+using System.Collections.Generic;
 
 public class GameDataModel : MonoBehaviour
 {
@@ -6,12 +7,12 @@ public class GameDataModel : MonoBehaviour
     public bool isDebugMode = false; // 디버그 모드 여부
     public int totalScore;
     public int unlockedLevels;
-    
-    // [추가] 다음 씬에서 사용할 스폰 포인트 ID
     public string nextSpawnPointIdentifier;
+    private HashSet<string> clearedLevelIds = new HashSet<string>();
 
     private void Awake()
     {
+        nextSpawnPointIdentifier = "0"; // 초기값 설정
         // 싱글톤 패턴 구현
         if (Instance == null)
         {
@@ -22,5 +23,18 @@ public class GameDataModel : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void MarkLevelAsCleared(string levelId)
+    {
+        if (!clearedLevelIds.Contains(levelId))
+        {
+            clearedLevelIds.Add(levelId);
+            Debug.Log("Level Cleared and Saved: " + levelId);
+        }
+    }
+    public bool IsLevelCleared(string levelId)
+    {
+        return clearedLevelIds.Contains(levelId);
     }
 }

@@ -121,6 +121,8 @@ MonoBehaviour:
   dropOffset: 1
   shrinkAmountPerWeight: 0.02
   minHeightScale: 0.5
+  isStunned: 0
+  stunDuration: 3
 --- !u!1 &7551458985762427675
 GameObject:
   m_ObjectHideFlags: 0
