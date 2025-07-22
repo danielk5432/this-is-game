@@ -9,6 +9,10 @@ public class GhostEnemySpawnerNew : MonoBehaviour
     public Transform[] spawnPoints;
     [Tooltip("Time to respawn after a ghost dies.")]
     public float respawnDelay = 5f;
+    [Tooltip("Initial delay before the first ghost spawns.")]
+    public float initialDelay = 3f;
+    [Tooltip("Random time added or subtracted from delays.")]
+    public float randomTimeRange = 2f;
 
     private bool isSpawning = false;
     private bool stopSpawning = false;
@@ -22,8 +26,7 @@ public class GhostEnemySpawnerNew : MonoBehaviour
         if (isSpawning) return;
         
         Debug.Log("Ghost Spawner: Began spawning.");
-        isSpawning = true;
-        SpawnGhost(); // Spawn the initial ghost.
+        StartCoroutine(startRoutine()); // Spawn the initial ghost.
     }
 
     /// <summary>
@@ -47,9 +50,16 @@ public class GhostEnemySpawnerNew : MonoBehaviour
         StartCoroutine(RespawnRoutine());
     }
 
+    private IEnumerator startRoutine()
+    {
+        yield return new WaitForSeconds(initialDelay + Random.Range(-randomTimeRange, randomTimeRange));
+        isSpawning = true;
+        SpawnGhost(); // Spawn the first ghost after the initial delay.
+    }
+
     private IEnumerator RespawnRoutine()
     {
-        yield return new WaitForSeconds(respawnDelay);
+        yield return new WaitForSeconds(respawnDelay + Random.Range(-randomTimeRange, randomTimeRange));
         isSpawning = true;
 
         // Before spawning, double-check if the spawner has been stopped during the delay.

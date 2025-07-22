@@ -8,7 +8,7 @@ public class EnemySpawnManager : MonoBehaviour
     public GhostEnemySpawnerNew ghostSpawner;
     public BurstEnemySpawnerNew burstSpawner;
     public BombRainSpawner bombRainController;
-    public LaserController laserController;
+    public LaserSpawner laserController;
     
     public enum SpawnType { Ghost, Burst, BombRain, Laser }
     
@@ -17,6 +17,7 @@ public class EnemySpawnManager : MonoBehaviour
     /// </summary>
     public void StartSpawning(SpawnType type)
     {
+        Debug.Log($"Starting spawner for type: {type}");
         switch (type)
         {
             case SpawnType.Ghost:
@@ -28,7 +29,9 @@ public class EnemySpawnManager : MonoBehaviour
             case SpawnType.BombRain:
                 if (bombRainController != null) bombRainController.BeginSpawning();
                 break;
-            
+            case SpawnType.Laser:
+                if (laserController != null) laserController.BeginSpawning();
+                break;
         }
     }
 
@@ -37,6 +40,7 @@ public class EnemySpawnManager : MonoBehaviour
     /// </summary>
     public void StopSpawning(SpawnType type)
     {
+        Debug.Log($"Stopping spawner for type: {type}");
         switch (type)
         {
             case SpawnType.Ghost:
@@ -45,7 +49,12 @@ public class EnemySpawnManager : MonoBehaviour
             case SpawnType.Burst:
                 if (burstSpawner != null) burstSpawner.StopSpawning();
                 break;
-            // Add other enemy types here...
+            case SpawnType.BombRain:
+                if (bombRainController != null) bombRainController.StopSpawning();
+                break;
+            case SpawnType.Laser:
+                if (laserController != null) laserController.StopSpawning();
+                break;
         }
     }
 
@@ -54,10 +63,12 @@ public class EnemySpawnManager : MonoBehaviour
     /// </summary>
     public void StopAndClearAll()
     {
+        Debug.Log("Stopping all enemy spawners and clearing all enemies.");
         // Tell all spawners to stop their individual routines.
         if (ghostSpawner != null) ghostSpawner.StopSpawning();
         if (burstSpawner != null) burstSpawner.StopSpawning();
-        // ... stop other spawners ...
+        if (bombRainController != null) bombRainController.StopSpawning();
+        if (laserController != null) laserController.StopSpawning();
 
         // Destroy all objects tagged as "Enemy"
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");

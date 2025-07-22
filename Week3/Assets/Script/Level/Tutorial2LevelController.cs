@@ -6,9 +6,9 @@ using System.Linq;
 public class Tutorial2LevelControler : BaseLevelController
 {
     [Header("Level Specific Settings")]
-    //public SpawnManager spawnManager;
+    //public SpawnManager enemySpawnManager;
     public List<BoxData> possibleRequiredBoxes;
-    public EnemySpawnManager spawnManager;
+    public EnemySpawnManager enemySpawnManager;
     [Tooltip("The fixed number of parts this level's machines will require.")]
     public int requiredPartsCount = 1; // 레벨별로 고정된 요구 부품 개수
     
@@ -38,18 +38,21 @@ public class Tutorial2LevelControler : BaseLevelController
         if (!firstRepairDone)
         {
             firstRepairDone = true;
+            Debug.Log("First machine repaired! Starting enemy spawners.");
+            // Start all enemy spawners.
             SpawnEnemy();
         }
     }
     
     private void SpawnEnemy()
     {
-        if (spawnManager != null)
+        if (enemySpawnManager != null)
         {
             Debug.Log("First repair complete! Enemies will now spawn.");
-            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Ghost);
-            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Burst); 
-            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.BombRain);
+            enemySpawnManager.StartSpawning(EnemySpawnManager.SpawnType.Ghost);
+            enemySpawnManager.StartSpawning(EnemySpawnManager.SpawnType.Burst);
+            enemySpawnManager.StartSpawning(EnemySpawnManager.SpawnType.BombRain);
+            enemySpawnManager.StartSpawning(EnemySpawnManager.SpawnType.Laser);
         }
     }
 
@@ -149,10 +152,7 @@ public class Tutorial2LevelControler : BaseLevelController
     
     protected override void OnLevelClear()
     {
-        // Stop all enemies and machines.
-        //if (spawnManager != null) spawnManager.StopSpawning();
-        // You can add logic here to stop all machine activity.
-        //StopAllCoroutines();함수 이름 바꾸기 적 생성 코루틴만 없애라
+        enemySpawnManager.StopAndClearAll();
     }
 
     protected override void OpenExit()

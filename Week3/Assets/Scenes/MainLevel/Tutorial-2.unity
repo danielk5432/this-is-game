@@ -3064,6 +3064,7 @@ GameObject:
   - component: {fileID: 161337160}
   - component: {fileID: 161337162}
   - component: {fileID: 161337163}
+  - component: {fileID: 161337164}
   m_Layer: 0
   m_Name: SpawnManager
   m_TagString: Untagged
@@ -3117,6 +3118,8 @@ MonoBehaviour:
   spawnPoints:
   - {fileID: 1873524505}
   respawnDelay: 5
+  initialDelay: 3
+  randomSpawnRange: 2
 --- !u!114 &161337161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3131,8 +3134,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ghostSpawner: {fileID: 161337160}
   burstSpawner: {fileID: 161337162}
-  bombRainController: {fileID: 0}
-  laserController: {fileID: 0}
+  bombRainController: {fileID: 161337163}
+  laserController: {fileID: 161337164}
 --- !u!114 &161337162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3169,6 +3172,29 @@ MonoBehaviour:
   spawnInterval: 15
   initialDelay: 3
   spawnHeight: 10
+--- !u!114 &161337164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161337157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14652434d858f4189b7a3ff43cd82ce9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  laserPrefab: {fileID: 910592650061170869, guid: d37127854072548d7b442ad4b57ed88d,
+    type: 3}
+  spawnInterval: 20
+  spawnRandomRange: 2
+  initialDelay: 5
+  spawnArea:
+    serializedVersion: 2
+    x: -10
+    y: -5
+    width: 20
+    height: 10
 --- !u!1 &197161045
 GameObject:
   m_ObjectHideFlags: 0
@@ -24471,7 +24497,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 51c7d839792114116b9b3f84c83d7147, type: 2}
   - {fileID: 11400000, guid: c836e53ddd5d340b3a23955ae39f5eef, type: 2}
   - {fileID: 11400000, guid: 320e4f7ed5cec41c4b6de436695f0adc, type: 2}
-  spawnManager: {fileID: 161337161}
+  enemySpawnManager: {fileID: 161337161}
   requiredPartsCount: 2
   firstBreakdownDelay: 2
   periodicBreakdownTime: 10

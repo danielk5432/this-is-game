@@ -1,0 +1,147 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3079050346334068750
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1772903220459873328}
+  - component: {fileID: 662148372346106903}
+  - component: {fileID: 8533405938681416740}
+  - component: {fileID: 5298981069592099935}
+  - component: {fileID: 4002214510151349149}
+  - component: {fileID: 8605190095186702586}
+  - component: {fileID: 4827842912711525013}
+  m_Layer: 0
+  m_Name: SpawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1772903220459873328
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3079050346334068750}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.39635, y: 0.47712, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &662148372346106903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3079050346334068750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbd98b8fb741c4d69b0e6b4599cebb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 2370355334829933799, guid: 1f2b068d1c012464c810ba6056febbc5,
+    type: 3}
+--- !u!114 &8533405938681416740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3079050346334068750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8252ea813039f429180ea6481a34b8a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ghostSpawner: {fileID: 5298981069592099935}
+  burstSpawner: {fileID: 4002214510151349149}
+  bombRainController: {fileID: 8605190095186702586}
+  laserController: {fileID: 4827842912711525013}
+--- !u!114 &5298981069592099935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3079050346334068750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 325a175b7770f4ef1bc3191cf0770bd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ghostEnemyPrefab: {fileID: 8868868457563766821, guid: 270ae6d98e04741c6abc3e45a88501bb,
+    type: 3}
+  spawnPoints:
+  - {fileID: 0}
+  respawnDelay: 5
+  initialDelay: 3
+  randomTimeRange: 2
+--- !u!114 &4002214510151349149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3079050346334068750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9594c7f4f4504d298e4fad0a81ae67f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  burstEnemyPrefab: {fileID: 695707626822049129, guid: 5cd8ef9d660b14b0695b46c30b3c5360,
+    type: 3}
+  spawnInterval: 5
+  spawnRadius: 5
+  initialDelay: 3
+--- !u!114 &8605190095186702586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3079050346334068750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21ecc76e2e27b4dd1a675e6febb94481, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  warningIndicatorPrefab: {fileID: 8923594225631624755, guid: 400e24fcec34c47a6b45e783800491f7,
+    type: 3}
+  bombPrefab: {fileID: 4748613121228274907, guid: 9a92250b475c347fea8304fa9a7791b1,
+    type: 3}
+  spawnInterval: 15
+  initialDelay: 3
+  spawnHeight: 10
+--- !u!114 &4827842912711525013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3079050346334068750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14652434d858f4189b7a3ff43cd82ce9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  laserPrefab: {fileID: 910592650061170869, guid: d37127854072548d7b442ad4b57ed88d,
+    type: 3}
+  spawnInterval: 7
+  spawnRandomRange: 2
+  initialDelay: 5
+  spawnArea:
+    serializedVersion: 2
+    x: -10
+    y: -5
+    width: 20
+    height: 10
