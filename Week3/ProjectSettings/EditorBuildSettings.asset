@@ -17,5 +17,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainLevel/Tutorial-2.unity
     guid: 7be274b7c4f1a477ca217bc484825207
+  - enabled: 1
+    path: Assets/Scenes/MainLevel/Map_West.unity
+    guid: 194461cd79a359f4f8386b4ab38db86b
+  - enabled: 1
+    path: Assets/Scenes/MainLevel/Map_Center.unity
+    guid: 97273645cc83ffd47aa808e1dabf355e
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
