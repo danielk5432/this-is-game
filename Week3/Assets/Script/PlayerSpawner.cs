@@ -4,6 +4,7 @@ public class PlayerSpawner : MonoBehaviour
 {
     [Tooltip("생성할 플레이어 프리팹")]
     public GameObject playerPrefab;
+    public static Transform playerInstance { get; private set; }
 
     public void SpawnPlayer()
     {
@@ -26,6 +27,7 @@ public class PlayerSpawner : MonoBehaviour
         }
 
         GameObject spawnedPlayer;
+
 
         // 3. 플레이어 생성
         if (targetSpawnPoint != null)
@@ -54,6 +56,10 @@ public class PlayerSpawner : MonoBehaviour
             {
                 Debug.LogWarning("PF Player 오브젝트를 찾을 수 없습니다.");
             }
+
+            playerInstance = spawnedPlayer.transform;
+
+            Debug.Log("Player spawned and reference is now available.");
         }
         else
         {
@@ -71,5 +77,6 @@ public class PlayerSpawner : MonoBehaviour
         {
             Debug.LogWarning("CameraFollow 스크립트를 Main Camera에 찾을 수 없습니다.");
         }
+        
     }
 }
