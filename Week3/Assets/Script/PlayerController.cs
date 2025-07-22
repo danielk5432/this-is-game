@@ -6,8 +6,9 @@ public class PlayerController : MonoBehaviour
     [Header("Movement Settings")]
     public float baseMoveSpeed = 4f;
     public float minMoveSpeed = 0.1f;
-    public float speedDecreasePerWeight = 0.1f;
-    public float speedDecreasePerWeightOver15 = 0.2f;
+    public float speedDecreasePerWeight = 0.05f;
+    public float speedDecreasePerWeightOver20 = 0.1f;
+    public float speedDecreasePerWeightOver30 = 0.2f;
 
     [Header("Interaction Settings")]
     public Transform headPosition; // The initial stacking point on the player's head.
@@ -221,13 +222,17 @@ public class PlayerController : MonoBehaviour
 
     void UpdateSpeedByWeight()
     {
-        if (totalWeight < 16) 
+        if (totalWeight < 21) 
         {
             currentMoveSpeed = baseMoveSpeed - totalWeight * speedDecreasePerWeight;
         }
+        else if (totalWeight < 31)
+        {
+            currentMoveSpeed = baseMoveSpeed - 20f * speedDecreasePerWeight - (totalWeight - 20f) * speedDecreasePerWeightOver20;
+        }
         else
-       {
-            currentMoveSpeed = baseMoveSpeed - 15f * speedDecreasePerWeight - (totalWeight - 15f) * speedDecreasePerWeightOver15;
+        {
+            currentMoveSpeed = baseMoveSpeed - 30f * speedDecreasePerWeight - (totalWeight - 30f) * speedDecreasePerWeightOver30;
         }
         currentMoveSpeed = Mathf.Max(minMoveSpeed, currentMoveSpeed);
     }
