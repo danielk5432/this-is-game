@@ -26,5 +26,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainLevel/Map_East.unity
     guid: b62135e0df94611499c284d3bf86b914
+  - enabled: 1
+    path: Assets/Scenes/MainLevel/Map_North.unity
+    guid: 2c0fd5205cd54d84fa286b9200ef9c9c
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

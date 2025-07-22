@@ -3,12 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class Map_East_Controller : BaseLevelController
+public class Map_North_Controller : BaseLevelController
 {
     [Header("Level Specific Settings")]
     //public SpawnManager spawnManager;
     public List<BoxData> possibleRequiredBoxes;
-    public EnemySpawnManager spawnManager;
     [Tooltip("The fixed number of parts this level's machines will require.")]
     public int requiredPartsCount = 1; // 레벨별로 고정된 요구 부품 개수
     
@@ -38,7 +37,6 @@ public class Map_East_Controller : BaseLevelController
         if (!firstRepairDone)
         {
             firstRepairDone = true;
-            SpawnEnemy();
             /*
             if (spawnManager != null)
             {
@@ -46,16 +44,6 @@ public class Map_East_Controller : BaseLevelController
                 spawnManager.StartSpawning(); // Assuming SpawnManager has this method.
             }
             */
-        }
-    }
-
-    private void SpawnEnemy()
-    {
-        if (spawnManager != null)
-        {
-            Debug.Log("First repair complete! Enemies will now spawn.");
-            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Ghost); 
-            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Burst); 
         }
     }
 
@@ -124,22 +112,15 @@ public class Map_East_Controller : BaseLevelController
         {
             // Pick one random machine from the available list.
             BaseMachineController machineToBreak = availableMachines[Random.Range(0, availableMachines.Count)];
-            List<BoxData> requirements = new List<BoxData>();
+
             // Generate a list of required boxes.
-            List<BoxData> availableBoxesPool = new List<BoxData>(possibleRequiredBoxes);
+            List<BoxData> requirements = new List<BoxData>();
 
             // Loop for the fixed number of required parts.
             for (int i = 0; i < requiredPartsCount; i++)
             {
-                if (availableBoxesPool.Count == 0) break;
-
-                // Pick a random box from the pool.
-                int randomIndex = Random.Range(0, availableBoxesPool.Count);
-                BoxData selectedBox = availableBoxesPool[randomIndex];
-
-                // Add it to the requirements and remove it from the pool to prevent re-selection.
-                requirements.Add(selectedBox);
-                availableBoxesPool.RemoveAt(randomIndex);
+                // Select a completely random box from the possible options, allowing duplicates.
+                requirements.Add(possibleRequiredBoxes[Random.Range(0, possibleRequiredBoxes.Count)]);
             }
 
             // Tell the machine to break with the generated requirements.
