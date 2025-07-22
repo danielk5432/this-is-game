@@ -25,18 +25,51 @@ public class PlayerSpawner : MonoBehaviour
             }
         }
 
+        GameObject spawnedPlayer;
 
         // 3. 플레이어 생성
         if (targetSpawnPoint != null)
         {
             // 일치하는 스폰 포인트를 찾았으면 그 위치에 생성
-            Instantiate(playerPrefab, targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
+            spawnedPlayer = Instantiate(playerPrefab, targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation, targetSpawnPoint.transform.parent);
+            spawnedPlayer.layer = targetSpawnPoint.gameObject.layer;
+
+            // 👇 [2] Sorting Layer 설정: PF Player 하위에서 SpriteRenderer 찾아서 설정
+            Transform pfPlayer = spawnedPlayer.transform.Find("PF Player");
+            if (pfPlayer != null)
+            {
+                SpriteRenderer sr = pfPlayer.GetComponent<SpriteRenderer>();
+                if (sr != null)
+                {
+                    string sortingLayerName = LayerMask.LayerToName(targetSpawnPoint.gameObject.layer);
+                    sr.sortingLayerName = sortingLayerName;
+                    Debug.Log($"PF Player의 sortingLayerName을 \"{sortingLayerName}\"으로 설정함");
+                }
+                else
+                {
+                    Debug.LogWarning("PF Player에 SpriteRenderer가 없습니다.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("PF Player 오브젝트를 찾을 수 없습니다.");
+            }
         }
         else
         {
             // 못 찾았거나, 게임을 처음 시작해서 ID가 없는 경우 기본 위치에 생성
             Debug.LogWarning("목표 스폰 포인트를 찾지 못했습니다. 기본 위치에 생성합니다.");
-            Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+            spawnedPlayer = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+        }
+
+        CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
+        if (cameraFollow != null)
+        {
+            cameraFollow.target = spawnedPlayer.transform;
+        }
+        else
+        {
+            Debug.LogWarning("CameraFollow 스크립트를 Main Camera에 찾을 수 없습니다.");
         }
     }
 }
