@@ -4,6 +4,7 @@ public class PlayerSpawner : MonoBehaviour
 {
     [Tooltip("생성할 플레이어 프리팹")]
     public GameObject playerPrefab;
+    public static Transform playerInstance { get; private set; }
 
     public void SpawnPlayer()
     {
@@ -26,11 +27,20 @@ public class PlayerSpawner : MonoBehaviour
         }
 
 
+
         // 3. 플레이어 생성
         if (targetSpawnPoint != null)
         {
             // 일치하는 스폰 포인트를 찾았으면 그 위치에 생성
-            Instantiate(playerPrefab, targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
+            
+            
+            GameObject playerObject = Instantiate(playerPrefab, targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
+
+
+            // 2. Store its transform in the static variable for others to access.
+            playerInstance = playerObject.transform;
+
+            Debug.Log("Player spawned and reference is now available.");
         }
         else
         {
@@ -38,5 +48,6 @@ public class PlayerSpawner : MonoBehaviour
             Debug.LogWarning("목표 스폰 포인트를 찾지 못했습니다. 기본 위치에 생성합니다.");
             Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
         }
+        
     }
 }

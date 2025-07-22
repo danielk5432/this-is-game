@@ -374,7 +374,7 @@ MonoBehaviour:
   boxToProduce: {fileID: 11400000, guid: 226a790bece9a41a79767b04fb390511, type: 2}
   isBoxRequired: 0
   requiredBox: {fileID: 0}
-  productionTime: 3
+  productionTime: 1
   animationLength: 0.8
   boxIconObject: {fileID: 7478640977226526872}
   animator: {fileID: 8320538393387544889}
