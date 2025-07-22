@@ -78,11 +78,42 @@ public class GhostEnemySpawnerNew : MonoBehaviour
             return;
         }
 
-        // 1. Pick a random spawn point.
-        Transform randomSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        // Find the spawn point farthest from the player.
+
+        Transform playerTransform = PlayerSpawner.playerInstance;
+        Transform farthestSpawnPoint = null;
+        float maxDistanceSqr = -1f; // Use squared distance for performance comparison.
+
+        if (playerTransform != null)
+        {
+            // Loop through all available spawn points.
+            foreach (Transform spawnPoint in spawnPoints)
+            {
+                // Calculate the squared distance from the player to the spawn point.
+                float distanceSqr = (spawnPoint.position - playerTransform.position).sqrMagnitude;
+
+                // If this point is farther than the farthest one found so far, update it.
+                if (distanceSqr > maxDistanceSqr)
+                {
+                    maxDistanceSqr = distanceSqr;
+                    farthestSpawnPoint = spawnPoint;
+                }
+            }
+        }
+
+        // As a fallback in case the player isn't found or something goes wrong,
+        // just pick a random one.
+        if (farthestSpawnPoint == null && spawnPoints.Length > 0)
+        {
+            farthestSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        }
+
+        // Now, 'farthestSpawnPoint' holds the transform of the farthest point.
+        // You can use it to instantiate the enemy.
+        // Ex: Instantiate(ghostEnemyPrefab, farthestSpawnPoint.position, farthestSpawnPoint.rotation);
         
         // 2. Instantiate the ghost.
-        GameObject ghostInstance = Instantiate(ghostEnemyPrefab, randomSpawnPoint.position, randomSpawnPoint.rotation);
+        GameObject ghostInstance = Instantiate(ghostEnemyPrefab, farthestSpawnPoint.position, farthestSpawnPoint.rotation);
         
         // 3. Get the ghost's script component.
         GhostEnemyNew ghostScript = ghostInstance.GetComponent<GhostEnemyNew>();
