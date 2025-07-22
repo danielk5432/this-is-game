@@ -6,7 +6,11 @@ public class LaserProjectileTrigger : MonoBehaviour
     {
         if (other.CompareTag("Box"))
         {
-            Destroy(other.gameObject);
+            BaseBox box = other.GetComponent<BaseBox>();
+            if (box != null)
+            {
+                box.DestroyBox();
+            }
         }
         else if (other.CompareTag("Player"))
         {

@@ -146,12 +146,14 @@ public class PlayerController : MonoBehaviour
     public void ConsumeTopBox()
     {
         if (carriedBoxes.Count == 0) return;
-        GameObject topBox = carriedBoxes[carriedBoxes.Count - 1];
+        BaseBox topBox = carriedBoxes[carriedBoxes.Count - 1].GetComponent<BaseBox>();
         carriedBoxes.RemoveAt(carriedBoxes.Count - 1);
+
+        totalWeight -= GetBoxWeight(topBox.gameObject);
+        RestoreHeight(GetBoxWeight(topBox.gameObject));
+
+        topBox.DestroyBox();
         
-        totalWeight -= GetBoxWeight(topBox);
-        RestoreHeight(GetBoxWeight(topBox));
-        Destroy(topBox);
     }
     
     public BoxData GetTopBoxData()

@@ -209,6 +209,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxData: {fileID: 11400000, guid: 226a790bece9a41a79767b04fb390511, type: 2}
+  boxBreakParticle: {fileID: 383973083912414692, guid: 6e3c6d736eb48344ca2f0cf97454a88a,
+    type: 3}
 --- !u!1 &8485278452411910433
 GameObject:
   m_ObjectHideFlags: 0

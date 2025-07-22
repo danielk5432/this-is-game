@@ -35,7 +35,11 @@ public class ProjectileController : MonoBehaviour
         }
         else if (other.CompareTag(boxTag))
         {
-            Destroy(other.gameObject);  // 박스 파괴
+            BaseBox box = other.GetComponent<BaseBox>();
+            if (box != null)
+            {
+                box.DestroyBox();
+            }
             Destroy(gameObject);
         }
         else if (other.CompareTag(playerTag))

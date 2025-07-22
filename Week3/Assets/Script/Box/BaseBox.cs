@@ -7,7 +7,7 @@ public class BaseBox : MonoBehaviour, IInteractable
     private bool isHeld = false;
     private Rigidbody2D rb;
     private Vector3 originalScale;
-
+    public GameObject boxBreakParticle;
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -44,5 +44,11 @@ public class BaseBox : MonoBehaviour, IInteractable
         transform.position = dropPosition;
         transform.localScale = originalScale; // Reset scale to original.
         if (rb != null) rb.simulated = true;
+    }
+
+    public void DestroyBox()
+    {
+        Instantiate(boxBreakParticle, transform.position, Quaternion.identity);
+        Destroy(this.gameObject);
     }
 }
