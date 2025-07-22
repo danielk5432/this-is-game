@@ -19,6 +19,7 @@ public class TestLevel2Controller : BaseLevelController
     public GhostEnemySpawner ghostEnemySpawner;
     [Tooltip("Time between ghost enemy spawns.")]
     public float ghostEnemySpawnInterval = 10f;
+    private bool canSpawnGhostEnemy = true;
 
     // This list will be populated with all machines in the scene.
     protected List<BaseMachineController> machinesInLevel;
@@ -29,15 +30,18 @@ public class TestLevel2Controller : BaseLevelController
     public GameObject warningIndicatorPrefab;
     public BombRainController bombRainController;
     public float bombRainInterval = 15f;
+    private bool canSpawnBomb = true;
     
     [Header("Lazer Settings")]
     public GameObject laserPrefab;
     public float minX = -10f, maxX = 10f, minY = -10f, maxY = 10f;
     public float laserInterval = 15f;
+    private bool canSpawnLaser = true;
 
     [Header("Burst Enemy Settings")]
     public BurstEnemySpawner burstEnemySpawner;
     public float burstEnemySpawnInterval = 15f;
+    private bool canSpawnBurstEnemy = true;
 
     protected override void InitializeLevel()
     {
@@ -100,12 +104,12 @@ public class TestLevel2Controller : BaseLevelController
     {
         yield return new WaitForSeconds(3f); // Optional initial delay
 
-        while (true)
+        while (canSpawnGhostEnemy)
         {
             if (ghostEnemy == null && !waitingToSpawnGhostEnemy)
             {
                 waitingToSpawnGhostEnemy = true;
-                yield return new WaitForSeconds(ghostEnemySpawnInterval);
+                
 
                 if (ghostEnemy == null)
                 {
@@ -115,8 +119,7 @@ public class TestLevel2Controller : BaseLevelController
 
                 waitingToSpawnGhostEnemy = false;
             }
-
-            yield return null;
+            yield return new WaitForSeconds(ghostEnemySpawnInterval);
         }
     }
 
@@ -124,7 +127,7 @@ public class TestLevel2Controller : BaseLevelController
     {
         yield return new WaitForSeconds(3f);
 
-        while (true)
+        while (canSpawnBomb)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (player != null)
@@ -138,10 +141,10 @@ public class TestLevel2Controller : BaseLevelController
 
     private IEnumerator LaserRoutine()
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(laserInterval);
+        yield return new WaitForSeconds(3f);
 
+        while (canSpawnLaser)
+        {
             // 왼쪽 영역에서 시작
             Vector3 start = new Vector3(
                 Random.Range(-10f, -8f), // x: 왼쪽
@@ -160,19 +163,42 @@ public class TestLevel2Controller : BaseLevelController
 
             GameObject laser = Instantiate(laserPrefab);
             laser.GetComponent<LaserController>().Init(start, direction);
+
+            yield return new WaitForSeconds(laserInterval);
         }
     }
 
     private IEnumerator BurstEnemySpawnRoutine()
     {
-        while (true)
+        yield return new WaitForSeconds(3f);
+
+        while (canSpawnBurstEnemy)
         {
-            yield return new WaitForSeconds(burstEnemySpawnInterval);
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (player != null)
             {
                 burstEnemySpawner.SpawnNearPlayer(player.transform.position);
             }
+            yield return new WaitForSeconds(burstEnemySpawnInterval);
+        }
+    }
+
+    private void isDone()
+    {
+        canSpawnGhostEnemy = false;
+        canSpawnBomb = false;
+        canSpawnLaser = false;
+        canSpawnBurstEnemy = false;
+
+        DestroyAllEnemies();
+    }
+
+    private void DestroyAllEnemies()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject enemy in enemies)
+        {
+            Destroy(enemy);
         }
     }
 
