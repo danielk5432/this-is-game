@@ -22,6 +22,9 @@ public class PlayerController : MonoBehaviour
     public bool isStunned = false;
     public float stunDuration = 3f;
 
+    [Header("Particle Settings")]
+    public GameObject boxBreakParticle;
+
     // --- Private Variables ---
     private Vector2 dir;
     private Vector2 lookDirection = Vector2.down;
@@ -146,12 +149,14 @@ public class PlayerController : MonoBehaviour
     public void ConsumeTopBox()
     {
         if (carriedBoxes.Count == 0) return;
-        GameObject topBox = carriedBoxes[carriedBoxes.Count - 1];
+        BaseBox topBox = carriedBoxes[carriedBoxes.Count - 1].GetComponent<BaseBox>();
         carriedBoxes.RemoveAt(carriedBoxes.Count - 1);
+
+        totalWeight -= GetBoxWeight(topBox.gameObject);
+        RestoreHeight(GetBoxWeight(topBox.gameObject));
+
+        topBox.DestroyBox();
         
-        totalWeight -= GetBoxWeight(topBox);
-        RestoreHeight(GetBoxWeight(topBox));
-        Destroy(topBox);
     }
     
     public BoxData GetTopBoxData()

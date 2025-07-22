@@ -2703,6 +2703,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bombPrefab: {fileID: 168560915064891458, guid: 955336680ed78724baf6e9c83e5aade2,
     type: 3}
+  spawnHeight: 8
 --- !u!114 &161337162
 MonoBehaviour:
   m_ObjectHideFlags: 0

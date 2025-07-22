@@ -8,6 +8,13 @@ public class BombWarningIndicator : MonoBehaviour
 
     private float moveSpeed = 4f;
 
+    // 설정값
+    public float followDuration = 3f;
+    public float fadeDuration = 1f;
+    public float maxScale = 16f;
+    public float startAlpha = 0.4f;
+    public float endAlpha = 0.8f;
+
     public void Init(Transform targetPlayer)
     {
         player = targetPlayer;
@@ -18,16 +25,18 @@ public class BombWarningIndicator : MonoBehaviour
 
         spriteRenderer = GetComponent<SpriteRenderer>();
 
+        // 초기 설정
+        transform.localScale = Vector3.one;
+        SetAlpha(startAlpha);
+
         StartCoroutine(WarningRoutine());
     }
 
     private IEnumerator WarningRoutine()
     {
-        float followDuration = 3f;
-        float blinkDuration = 1f;
         float timer = 0f;
 
-        // 0~3초: 따라가며 점점 진해짐
+        // 1. 따라다니며 점점 커짐
         while (timer < followDuration)
         {
             if (player != null)
@@ -36,31 +45,46 @@ public class BombWarningIndicator : MonoBehaviour
                 transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * moveSpeed);
             }
 
-            // 점점 진해짐
-            float alpha = Mathf.Clamp01(timer / followDuration);
-            Color color = spriteRenderer.color;
-            color.a = alpha;
-            spriteRenderer.color = color;
+            // Scale 점점 증가
+            // Scale 점점 증가 (z는 그대로 유지)
+            float scaleT = timer / followDuration;
+            float currentScale = Mathf.Lerp(1f, maxScale, scaleT);
+            transform.localScale = new Vector3(currentScale, currentScale, transform.localScale.z);
+
+            // 알파값은 일정하게 유지
+            SetAlpha(startAlpha);
 
             timer += Time.deltaTime;
             yield return null;
         }
 
-        // 3~4초: 위치 고정 + 깜빡임
-        float blinkTimer = 0f;
-        while (blinkTimer < blinkDuration)
+        // 2. 위치 고정 + 알파 점점 진해짐
+        timer = 0f;
+        Vector3 fixedPosition = transform.position; // 현재 위치 고정
+        while (timer < fadeDuration)
         {
-            float alpha = Mathf.PingPong(blinkTimer * 8f, 1f); // 빠르게 깜빡임
-            Color color = spriteRenderer.color;
-            color.a = alpha;
-            spriteRenderer.color = color;
+            transform.position = fixedPosition;
 
-            blinkTimer += Time.deltaTime;
+            float t = timer / fadeDuration;
+            float alpha = Mathf.Lerp(startAlpha, endAlpha, t);
+            SetAlpha(alpha);
+
+            timer += Time.deltaTime;
             yield return null;
         }
 
-        // 폭탄 낙하
+        // 3. 슬라임 낙하
         FindObjectOfType<BombRainController>()?.DropBombAt(transform.position);
         Destroy(gameObject);
+    }
+
+    private void SetAlpha(float a)
+    {
+        if (spriteRenderer != null)
+        {
+            Color c = spriteRenderer.color;
+            c.a = a;
+            spriteRenderer.color = c;
+        }
     }
 }

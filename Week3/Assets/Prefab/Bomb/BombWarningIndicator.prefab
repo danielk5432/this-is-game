@@ -100,3 +100,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a2b6b7110b7b134895cd9d2ff76dedb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  followDuration: 3
+  fadeDuration: 1
+  maxScale: 16
+  startAlpha: 0.4
+  endAlpha: 0.8
