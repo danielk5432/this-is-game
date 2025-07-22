@@ -11,12 +11,14 @@ public class GhostEnemySpawnerNew : MonoBehaviour
     public float respawnDelay = 5f;
 
     private bool isSpawning = false;
+    private bool stopSpawning = false;
 
     /// <summary>
     /// Called by EnemySpawnManager to start the spawning process.
     /// </summary>
     public void BeginSpawning()
     {
+        stopSpawning = false;
         if (isSpawning) return;
         
         Debug.Log("Ghost Spawner: Began spawning.");
@@ -30,7 +32,7 @@ public class GhostEnemySpawnerNew : MonoBehaviour
     public void StopSpawning()
     {
         Debug.Log("Ghost Spawner: Stopped spawning.");
-        isSpawning = false;
+        stopSpawning = true;
         // Stop any pending respawn routines.
         StopAllCoroutines();
     }
@@ -41,18 +43,17 @@ public class GhostEnemySpawnerNew : MonoBehaviour
     public void OnGhostDied()
     {
         // If the spawner is active, start the respawn process.
-        if (isSpawning)
-        {
-            StartCoroutine(RespawnRoutine());
-        }
+        if (stopSpawning) return;
+        StartCoroutine(RespawnRoutine());
     }
 
     private IEnumerator RespawnRoutine()
     {
         yield return new WaitForSeconds(respawnDelay);
+        isSpawning = true;
 
         // Before spawning, double-check if the spawner has been stopped during the delay.
-        if (isSpawning)
+        if (!stopSpawning)
         {
             SpawnGhost();
         }
@@ -60,6 +61,7 @@ public class GhostEnemySpawnerNew : MonoBehaviour
 
     private void SpawnGhost()
     {
+        if (stopSpawning) return;
         if (spawnPoints == null || spawnPoints.Length == 0)
         {
             Debug.LogError("No spawn points assigned to GhostEnemySpawner!");

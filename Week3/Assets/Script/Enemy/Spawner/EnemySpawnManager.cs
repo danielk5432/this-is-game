@@ -7,7 +7,7 @@ public class EnemySpawnManager : MonoBehaviour
     [Header("Spawner References")]
     public GhostEnemySpawnerNew ghostSpawner;
     public BurstEnemySpawnerNew burstSpawner;
-    public BombRainController bombRainController;
+    public BombRainSpawner bombRainController;
     public LaserController laserController;
     
     public enum SpawnType { Ghost, Burst, BombRain, Laser }
@@ -25,7 +25,10 @@ public class EnemySpawnManager : MonoBehaviour
             case SpawnType.Burst:
                 if (burstSpawner != null) burstSpawner.BeginSpawning();
                 break;
-            // Add other enemy types here...
+            case SpawnType.BombRain:
+                if (bombRainController != null) bombRainController.BeginSpawning();
+                break;
+            
         }
     }
 

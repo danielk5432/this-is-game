@@ -74,7 +74,7 @@ public class BombWarningIndicator : MonoBehaviour
         }
 
         // 3. 슬라임 낙하
-        FindObjectOfType<BombRainController>()?.DropBombAt(transform.position);
+        //FindObjectOfType<BombRainController>()?.DropBombAt(transform.position);
         Destroy(gameObject);
     }
 
