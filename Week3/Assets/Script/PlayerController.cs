@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Found interactable: " + hit.name);
             IInteractable interactable = hit.GetComponent<IInteractable>();
-            if (interactable != null)
+            if (interactable != null && interactable.IsInteractable())
             {
                 float distance = Vector2.Distance(transform.position, hit.transform.position);
                 if (distance < minDistance)
