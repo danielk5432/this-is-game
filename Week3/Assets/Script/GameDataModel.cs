@@ -13,6 +13,7 @@ public class GameDataModel : MonoBehaviour
     private void Awake()
     {
         nextSpawnPointIdentifier = "0"; // 초기값 설정
+
         // 싱글톤 패턴 구현
         if (Instance == null)
         {

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 using System.Collections;
 
 public abstract class BaseLevelController : MonoBehaviour
@@ -107,4 +108,34 @@ public abstract class BaseLevelController : MonoBehaviour
     }
 
     protected void SetupCommonUI() { /* Common UI setup logic */ }
+
+    public void TriggerGameOver()
+    {
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowLoseText();
+        }
+        StartCoroutine(WaitForReload());
+    }
+
+    IEnumerator WaitForReload()
+    {
+        // Wait for a few seconds before loading the next level.
+        yield return new WaitForSeconds(2f);
+        SceneController.Instance.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    public void ShowWinText()
+    {
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowWinText();
+        }
+        StartCoroutine(WaitForWinTextDelete());
+    }
+    IEnumerator WaitForWinTextDelete()
+    {
+        // Wait for a few seconds before loading the next level.
+        yield return new WaitForSeconds(2f);
+        UIManager.Instance.HideText();
+    }
 }

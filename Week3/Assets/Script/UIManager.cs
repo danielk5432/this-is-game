@@ -9,6 +9,8 @@ public class UIManager : MonoBehaviour
     [Header("UI Elements")]
     public TextMeshProUGUI levelNameText;
     public TextMeshProUGUI repairProgressText;
+    public GameObject winText;
+    public GameObject loseText;
 
     private void Awake()
     {
@@ -20,6 +22,8 @@ public class UIManager : MonoBehaviour
         {
             Instance = this;
         }
+        winText.SetActive(false);
+        loseText.SetActive(false);
         repairProgressText.enabled = false;
     }
 
@@ -50,6 +54,31 @@ public class UIManager : MonoBehaviour
         if (repairProgressText != null)
         {
             repairProgressText.enabled = false; // 텍스트를 비활성화
+        }
+    }
+    public void ShowWinText()
+    {
+        if (winText != null)
+        {
+            winText.SetActive(true);
+        }
+    }
+    public void ShowLoseText()
+    {
+        if (loseText != null)
+        {
+            loseText.SetActive(true);
+        }
+    }
+    public void HideText()
+    {
+        if (winText != null)
+        {
+            winText.SetActive(false);
+        }
+        if (loseText != null)
+        {
+            loseText.SetActive(false);
         }
     }
 }

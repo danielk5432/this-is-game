@@ -218,7 +218,7 @@ public class BaseMachineController : MonoBehaviour, IInteractable
         // Time's up! Tell the LevelController it's game over.
         healthBarImage.sprite = healthBarImages[healthBarImages.Length - 1];
         Debug.Log(gameObject.name + " failed to be repaired in time!");
-        //BaseLevelController.Instance.TriggerGameOver("Repair time limit exceeded for " + gameObject.name);
+        BaseLevelController.Instance.TriggerGameOver();
     }
 
     private void Repair()
