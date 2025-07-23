@@ -170,6 +170,7 @@ public class Map_East_Controller : BaseLevelController
     
     protected override void OnLevelClear()
     {
+        spawnManager.StopAndClearAll();
         // Stop all enemies and machines.
         //if (spawnManager != null) spawnManager.StopSpawning();
         // You can add logic here to stop all machine activity.

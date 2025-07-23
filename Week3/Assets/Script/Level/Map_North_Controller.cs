@@ -8,6 +8,7 @@ public class Map_North_Controller : BaseLevelController
     [Header("Level Specific Settings")]
     //public SpawnManager spawnManager;
     public List<BoxData> possibleRequiredBoxes;
+    public EnemySpawnManager spawnManager;
     [Tooltip("The fixed number of parts this level's machines will require.")]
     public int requiredPartsCount = 1; // 레벨별로 고정된 요구 부품 개수
     
@@ -37,13 +38,45 @@ public class Map_North_Controller : BaseLevelController
         if (!firstRepairDone)
         {
             firstRepairDone = true;
-            /*
-            if (spawnManager != null)
-            {
-                Debug.Log("First repair complete! Enemies will now spawn.");
-                spawnManager.StartSpawning(); // Assuming SpawnManager has this method.
-            }
-            */
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.BombRain);
+        }
+        else if (currentRepairs == 3)
+        {
+            requiredPartsCount = 2;
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Burst);
+        }
+        else if (currentRepairs == 4)
+        {
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Ghost);
+        }
+        else if (currentRepairs == 5)
+        {
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Laser);
+        }
+        else if (currentRepairs == 7)
+        {
+            requiredPartsCount = 3;
+        }
+        else if (currentRepairs == 9)
+        {
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Burst);
+        }
+        else if (currentRepairs == 10)
+        {
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.BombRain);
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Laser);
+        }
+    }
+    
+    private void SpawnEnemy()
+    {
+        if (spawnManager != null)
+        {
+            Debug.Log("First repair complete! Enemies will now spawn.");
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Ghost);
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Burst); 
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.BombRain);
+            spawnManager.StartSpawning(EnemySpawnManager.SpawnType.Laser);
         }
     }
 
@@ -70,13 +103,13 @@ public class Map_North_Controller : BaseLevelController
                 // 모든 장치가 수리되었다면, 즉시 짧은 타이머를 실행하고 새 장치를 고장 냄
                 Debug.Log("All machines repaired! Triggering fast breakdown...");
                 yield return new WaitForSeconds(fastBreakdownTime); // 2~3초의 짧은 대기
-                
+
                 if (currentState != LevelState.Playing) yield break;
                 BreakRandomMachine();
-                
+
                 // 일반 타이머를 초기화하고 루프의 처음으로 돌아감
                 periodicTimer = periodicBreakdownTime;
-                continue; 
+                continue;
             }
 
             // 2b. 고장 난 장치가 하나라도 있다면, 일반 타이머를 진행
@@ -110,17 +143,26 @@ public class Map_North_Controller : BaseLevelController
 
         if (availableMachines.Count > 0)
         {
-            // Pick one random machine from the available list.
             BaseMachineController machineToBreak = availableMachines[Random.Range(0, availableMachines.Count)];
-
-            // Generate a list of required boxes.
             List<BoxData> requirements = new List<BoxData>();
 
-            // Loop for the fixed number of required parts.
+            // --- SELECTION LOGIC CHANGED (TO AVOID DUPLICATES) ---
+            // Create a temporary pool of available boxes to pick from.
+            List<BoxData> availableBoxesPool = new List<BoxData>(possibleRequiredBoxes);
+
             for (int i = 0; i < requiredPartsCount; i++)
             {
-                // Select a completely random box from the possible options, allowing duplicates.
-                requirements.Add(possibleRequiredBoxes[Random.Range(0, possibleRequiredBoxes.Count)]);
+                // If the pool is empty (e.g., asking for 4 items when there are only 3 types),
+                // stop trying to add more requirements.
+                if (availableBoxesPool.Count == 0) break;
+
+                // Pick a random box from the pool.
+                int randomIndex = Random.Range(0, availableBoxesPool.Count);
+                BoxData selectedBox = availableBoxesPool[randomIndex];
+
+                // Add it to the requirements and remove it from the pool to prevent re-selection.
+                requirements.Add(selectedBox);
+                availableBoxesPool.RemoveAt(randomIndex);
             }
 
             // Tell the machine to break with the generated requirements.
@@ -134,6 +176,7 @@ public class Map_North_Controller : BaseLevelController
     
     protected override void OnLevelClear()
     {
+        spawnManager.StopAndClearAll();
         // Stop all enemies and machines.
         //if (spawnManager != null) spawnManager.StopSpawning();
         // You can add logic here to stop all machine activity.
