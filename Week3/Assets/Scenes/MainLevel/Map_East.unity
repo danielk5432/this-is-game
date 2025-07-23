@@ -6817,6 +6817,7 @@ MonoBehaviour:
   burstEnemyPrefab: {fileID: 695707626822049129, guid: 5cd8ef9d660b14b0695b46c30b3c5360,
     type: 3}
   spawnInterval: 5
+  spawnRandomRange: 2
   spawnRadius: 5
   initialDelay: 3
 --- !u!114 &1111482418
