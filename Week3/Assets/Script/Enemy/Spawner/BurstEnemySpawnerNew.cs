@@ -7,6 +7,7 @@ public class BurstEnemySpawnerNew : MonoBehaviour
     [Header("Settings")]
     public GameObject burstEnemyPrefab;
     public float spawnInterval = 15f;
+    public float spawnRandomRange = 2f; // 랜덤 시간 간격
     public float spawnRadius = 5f;
     public float initialDelay = 3f;
 
@@ -44,7 +45,7 @@ public class BurstEnemySpawnerNew : MonoBehaviour
 
     private IEnumerator SpawnLoop()
     {
-        yield return new WaitForSeconds(initialDelay);
+        yield return new WaitForSeconds(initialDelay + Random.Range(-spawnRandomRange, spawnRandomRange));
 
         while (true)
         {
@@ -54,7 +55,7 @@ public class BurstEnemySpawnerNew : MonoBehaviour
                 Instantiate(burstEnemyPrefab, spawnPos, Quaternion.identity);
             }
             
-            yield return new WaitForSeconds(spawnInterval);
+            yield return new WaitForSeconds(spawnInterval + Random.Range(-spawnRandomRange, spawnRandomRange));
         }
     }
 

@@ -22,10 +22,13 @@ public class BaseBoxGenerator : MonoBehaviour, IInteractable
     [Header("Visual Components")]
     public GameObject boxIconObject;
     public Animator animator;
+    public Animator indicator;
+
     private bool isAnimating = false;
 
     private void Awake()
     {
+        
         if (currentState == GeneratorState.COMPLETE)
         {
             ProduceBoxInstance();
@@ -56,6 +59,19 @@ public class BaseBoxGenerator : MonoBehaviour, IInteractable
         {
             producedBoxInstance.SetActive(true);
         }
+        if (indicator != null)
+            switch (state)
+            {
+                case GeneratorState.IDLE:
+                    indicator.Play("Empty");
+                    break;
+                case GeneratorState.PRODUCING:
+                    indicator.Play("Loading");
+                    break;
+                case GeneratorState.COMPLETE:
+                    indicator.Play("Done");
+                    break;
+            }
     }
 
     public bool IsInteractable()

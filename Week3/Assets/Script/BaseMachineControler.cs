@@ -30,15 +30,26 @@ public class BaseMachineController : MonoBehaviour, IInteractable
     public Transform iconContainer; // 👈 아이콘들을 담을 컨테이너
     
     [Tooltip("The prefab for a single UI icon.")]
+
     public GameObject iconPrefab; // 👈 아이콘 UI 프리팹
-    
+    public GameObject healthFrame;
+    public GameObject healthBar;
+    [Tooltip("The array of sprites to display, in order from full to empty.")]
+    public Sprite[] healthBarImages; // Image component for the health bar
+
     private List<GameObject> spawnedIcons = new List<GameObject>();
 
     // --- Private State Variables ---
     private List<BoxData> requiredBoxes = new List<BoxData>();
     private List<BoxData> insertedBoxes = new List<BoxData>();
+    [Tooltip("Default Time limit in seconds to repair this machine (if time not set from levelControler).")]
+    public float defaultTimeToRepair = 60f; // 이 기계를 수리해야 하는 제한 시간
+    private Coroutine timerCoroutine; // 실행 중인 타이머 코루틴을 저장할 변수
+    private Image healthBarImage; // Image component for the health bar
+
     private void Awake()
     {
+        healthBarImage = healthBar.GetComponent<Image>();
         UpdateVisuals(currentState);
     }
 
@@ -98,34 +109,10 @@ public class BaseMachineController : MonoBehaviour, IInteractable
         }
     }
 
-    private void OnGUI()
-    {
-        // Simple GUI for debugging the machine's state and requirements.
-        if (Camera.main == null) return;
-        Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
-
-        if (screenPos.z > 0)
-        {
-            screenPos.y = Screen.height - screenPos.y;
-            // Display current state
-            Rect labelRect = new Rect(screenPos.x - 100, screenPos.y - 60, 200, 30);
-
-            // If diagnosed, display the required boxes
-            if (currentState == MachineState.DIAGNOSED)
-            {
-                string requiredText = "NEEDS: " + string.Join(", ", requiredBoxes.Select(b => b.boxName));
-                Rect requiredRect = new Rect(screenPos.x - 100, screenPos.y - 40, 200, 30);
-
-                string insertedText = "INSERTED: " + string.Join(", ", insertedBoxes.Select(b => b.boxName));
-                Rect insertedRect = new Rect(screenPos.x - 100, screenPos.y - 20, 200, 30);
-            }
-        }
-    }
-
     /// <summary>
     /// Called by the LevelController to break this machine.
     /// </summary>
-    public void TriggerBreakdown(List<BoxData> newRequiredBoxes)
+    public void TriggerBreakdown(List<BoxData> newRequiredBoxes, float time = 0f)
     {
         if (currentState == MachineState.NORMAL)
         {
@@ -133,6 +120,10 @@ public class BaseMachineController : MonoBehaviour, IInteractable
             requiredBoxes = newRequiredBoxes;
             insertedBoxes.Clear();
             Debug.Log(gameObject.name + " has broken down!");
+            // Start the self-destruct timer.
+            if (timerCoroutine != null) StopCoroutine(timerCoroutine);
+            defaultTimeToRepair = time > 0 ? time : defaultTimeToRepair; // Use provided time or default
+            timerCoroutine = StartCoroutine(TimerRoutine());
         }
     }
 
@@ -194,13 +185,57 @@ public class BaseMachineController : MonoBehaviour, IInteractable
         }
     }
 
+    private IEnumerator TimerRoutine()
+    {
+        if(healthFrame != null) healthFrame.gameObject.SetActive(true);
+        if(healthBar != null) healthBar.gameObject.SetActive(true);
+        float currentTime = defaultTimeToRepair;
+
+        while (currentTime > 0)
+        {
+            currentTime -= Time.deltaTime;
+            if(healthBar != null)
+            {
+                // 1. Calculate the current time as a percentage (from 1.0 down to 0.0)
+            float timePercentage = currentTime / defaultTimeToRepair;
+
+            // 2. Calculate which sprite index to show.
+            // We want the last image (e.g., index 5) when time is 0%,
+            // and the first image (index 0) when time is 100%.
+            int spriteIndex = Mathf.Clamp(
+                Mathf.FloorToInt((1 - timePercentage) * healthBarImages.Length), 
+                0, 
+                healthBarImages.Length - 1
+            );
+
+            // 3. Set the Image's sprite to the correct one from the array.
+            healthBarImage.sprite = healthBarImages[spriteIndex];
+            }
+            yield return null;
+        }
+
+        // --- GAME OVER TRIGGER ---
+        // Time's up! Tell the LevelController it's game over.
+        healthBarImage.sprite = healthBarImages[healthBarImages.Length - 1];
+        Debug.Log(gameObject.name + " failed to be repaired in time!");
+        //BaseLevelController.Instance.TriggerGameOver("Repair time limit exceeded for " + gameObject.name);
+    }
+
     private void Repair()
     {
         Debug.Log(gameObject.name + " has been repaired!");
+        if (timerCoroutine != null)
+        {
+            StopCoroutine(timerCoroutine);
+            timerCoroutine = null;
+        }
+        if(healthFrame != null) healthFrame.gameObject.SetActive(false);
+        if(healthBar != null) healthBar.gameObject.SetActive(false);
         ChangeState(MachineState.NORMAL);
         requiredBoxes.Clear();
         insertedBoxes.Clear();
         clearEffect?.Play(); // Play the clear effect if assigned
         BaseLevelController.Instance.OnMachineRepaired();
     }
+    
 }

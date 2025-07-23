@@ -218,6 +218,16 @@ MonoBehaviour:
   iconContainer: {fileID: 5486212982128450040}
   iconPrefab: {fileID: 7028941825836157357, guid: d5425b863e7fa4407a007581246de847,
     type: 3}
+  healthFrame: {fileID: 2334451047352134722}
+  healthBar: {fileID: 8443934993233722309}
+  healthBarImages:
+  - {fileID: -1594743092220051378, guid: 9d603d004f343468c83a28d9fbb5ba55, type: 3}
+  - {fileID: -5967510465986465161, guid: 9d603d004f343468c83a28d9fbb5ba55, type: 3}
+  - {fileID: 8398658285543214849, guid: 9d603d004f343468c83a28d9fbb5ba55, type: 3}
+  - {fileID: 4106149766456700549, guid: 9d603d004f343468c83a28d9fbb5ba55, type: 3}
+  - {fileID: 3425386745823283567, guid: 9d603d004f343468c83a28d9fbb5ba55, type: 3}
+  - {fileID: -8135494357045389428, guid: 9d603d004f343468c83a28d9fbb5ba55, type: 3}
+  defaultTimeToRepair: 60
 --- !u!1 &2334451047352134722
 GameObject:
   m_ObjectHideFlags: 0
@@ -235,7 +245,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1648783868935159443
 RectTransform:
   m_ObjectHideFlags: 0
@@ -636,7 +646,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3337436333987228697
 RectTransform:
   m_ObjectHideFlags: 0

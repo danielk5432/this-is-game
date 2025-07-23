@@ -25010,6 +25010,7 @@ MonoBehaviour:
   periodicBreakdownTime: 10
   fastBreakdownTime: 4
   randomTimeRange: 2
+  timeToRepair: 30
 --- !u!1 &1297799830 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2055102311959635369, guid: 6a057178eb028e94fb93bf39262ea3e8,
@@ -25805,7 +25806,7 @@ PrefabInstance:
     - target: {fileID: 535637812939931798, guid: 8d94d31cc16434a5584c397fdecb49f7,
         type: 3}
       propertyPath: destinationSpawnPointIdentifier
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1874555203252503480, guid: 8d94d31cc16434a5584c397fdecb49f7,
         type: 3}
@@ -25930,6 +25931,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: SpawnManager
       objectReference: {fileID: 0}
+    - target: {fileID: 4002214510151349149, guid: cc6e09804b03d4fd48d1773f8ba9cba2,
+        type: 3}
+      propertyPath: spawnInterval
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4002214510151349149, guid: cc6e09804b03d4fd48d1773f8ba9cba2,
+        type: 3}
+      propertyPath: spawnRandomRange
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5298981069592099935, guid: cc6e09804b03d4fd48d1773f8ba9cba2,
         type: 3}
       propertyPath: spawnPoints.Array.size
@@ -25950,6 +25961,11 @@ PrefabInstance:
       propertyPath: 'spawnPoints.Array.data[2]'
       value: 
       objectReference: {fileID: 297250479}
+    - target: {fileID: 8605190095186702586, guid: cc6e09804b03d4fd48d1773f8ba9cba2,
+        type: 3}
+      propertyPath: spawnInterval
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

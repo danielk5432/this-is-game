@@ -18,6 +18,7 @@ public class Tutorial2LevelControler : BaseLevelController
     public float periodicBreakdownTime = 20.0f;
     public float fastBreakdownTime = 3.0f;
     public float randomTimeRange = 2.0f;
+    public float timeToRepair = 60f; // 기본 수리 시간 (레벨 컨트롤러에서 설정되지 않은 경우 사용)
 
     private List<BaseMachineController> machinesInLevel;
     private bool firstRepairDone = false;
@@ -153,7 +154,7 @@ public class Tutorial2LevelControler : BaseLevelController
             }
 
             // Tell the machine to break with the generated requirements.
-            machineToBreak.TriggerBreakdown(requirements);
+            machineToBreak.TriggerBreakdown(requirements, timeToRepair);
         }
         else
         {
