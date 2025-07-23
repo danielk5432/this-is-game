@@ -6,6 +6,7 @@ using System.Linq;
 public class Tutorial2LevelControler : BaseLevelController
 {
     [Header("Level Specific Settings")]
+    public string levelName = "Tutorial 2";
     //public SpawnManager enemySpawnManager;
     public List<BoxData> possibleRequiredBoxes;
     public EnemySpawnManager enemySpawnManager;
@@ -26,13 +27,23 @@ public class Tutorial2LevelControler : BaseLevelController
         // Find all machines in this level.
         machinesInLevel = new List<BaseMachineController>(FindObjectsByType<BaseMachineController>(FindObjectsSortMode.None));
         
-        // Start the main game loop for this level.
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.SetLevelName(levelName);
+            UIManager.Instance.UpdateRepairProgress(currentRepairs, repairsToClear);
+        }
+        // -----------------------
+        
         StartCoroutine(LevelRoutine());
     }
 
     public override void OnMachineRepaired()
     {
         base.OnMachineRepaired(); // Call the base class logic to count repairs.
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateRepairProgress(currentRepairs, repairsToClear);
+        }
 
         // If this is the first repair, start spawning enemies.
         if (!firstRepairDone)
@@ -149,10 +160,12 @@ public class Tutorial2LevelControler : BaseLevelController
             Debug.Log("No available machines to break!");
         }
     }
-    
+
     protected override void OnLevelClear()
     {
         enemySpawnManager.StopAndClearAll();
+        Debug.Log("Level cleared! Stopping all enemy spawners.");
+        UIManager.Instance?.HideRepairProgress();
     }
 
     protected override void OpenExit()
@@ -160,7 +173,7 @@ public class Tutorial2LevelControler : BaseLevelController
         Debug.Log("Opening all doors with ID '0'.");
         // Find all DoorControler scripts in the scene.
         DoorControler[] allDoors = FindObjectsByType<DoorControler>(FindObjectsSortMode.None);
-        
+
         // Loop through all found doors.
         foreach (DoorControler door in allDoors)
         {
