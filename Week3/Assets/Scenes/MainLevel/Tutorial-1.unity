@@ -17942,7 +17942,7 @@ PrefabInstance:
     - target: {fileID: 535637812939931798, guid: 8d94d31cc16434a5584c397fdecb49f7,
         type: 3}
       propertyPath: destinationSceneName
-      value: Test-2
+      value: Tutorial-2
       objectReference: {fileID: 0}
     - target: {fileID: 535637812939931798, guid: 8d94d31cc16434a5584c397fdecb49f7,
         type: 3}
