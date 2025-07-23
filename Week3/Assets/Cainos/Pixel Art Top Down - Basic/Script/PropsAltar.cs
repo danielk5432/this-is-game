@@ -9,7 +9,7 @@ namespace Cainos.PixelArtTopDown_Basic
         public Color inactiveColor = new Color(1f, 1f, 1f, 0f);   // 투명
         public Color activeColor = new Color(1f, 1f, 1f, 1f);     // 완전 보이게
 
-        private void Awake()
+        private void Start()
         {
             // 초기화: 모든 룬 비활성화
             foreach (var r in runes)
