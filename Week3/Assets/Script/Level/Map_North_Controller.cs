@@ -7,6 +7,7 @@ public class Map_North_Controller : BaseLevelController
 {
     [Header("Level Specific Settings")]
     //public SpawnManager spawnManager;
+    public string levelName = "North";
     public List<BoxData> possibleRequiredBoxes;
     public EnemySpawnManager spawnManager;
     [Tooltip("The fixed number of parts this level's machines will require.")]
@@ -25,7 +26,11 @@ public class Map_North_Controller : BaseLevelController
     {
         // Find all machines in this level.
         machinesInLevel = new List<BaseMachineController>(FindObjectsByType<BaseMachineController>(FindObjectsSortMode.None));
-        
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.SetLevelName(levelName);
+            UIManager.Instance.UpdateRepairProgress(currentRepairs, repairsToClear);
+        }
         // Start the main game loop for this level.
         StartCoroutine(LevelRoutine());
     }
@@ -33,6 +38,11 @@ public class Map_North_Controller : BaseLevelController
     public override void OnMachineRepaired()
     {
         base.OnMachineRepaired(); // Call the base class logic to count repairs.
+
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateRepairProgress(currentRepairs, repairsToClear);
+        }
 
         // If this is the first repair, start spawning enemies.
         if (!firstRepairDone)
@@ -177,6 +187,7 @@ public class Map_North_Controller : BaseLevelController
     protected override void OnLevelClear()
     {
         spawnManager.StopAndClearAll();
+        UIManager.Instance?.HideRepairProgress();
         // Stop all enemies and machines.
         //if (spawnManager != null) spawnManager.StopSpawning();
         // You can add logic here to stop all machine activity.
