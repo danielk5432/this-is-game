@@ -34,8 +34,6 @@ public class PlayerController : MonoBehaviour
     private float totalWeight = 0f;
     private Animator animator;
     private float stunTimer = 0f;
-    private float pickupCooldown = 0.5f;
-    private float lastPickupTime = -999f;
 
     void Awake()
     {
@@ -106,11 +104,7 @@ public class PlayerController : MonoBehaviour
     
     public void PickupBox(BaseBox box)
     {
-        if (Time.time - lastPickupTime < pickupCooldown) return;
-
         if (carriedBoxes.Contains(box.gameObject)) return;
-
-        lastPickupTime = Time.time;
         // Determine the parent transform for stacking.
         Transform parentTarget = headPosition;
         if (carriedBoxes.Count > 0)
